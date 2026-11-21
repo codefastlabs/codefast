@@ -12,6 +12,8 @@ interface DisclosurePanelProps extends ComponentProps<"details"> {
  * Renders a collapsible card whose summary carries a chevron and a visible focus ring, shared by every folding panel.
  *
  * @remarks The group is named so a table inside can keep its own unnamed `group` rows.
+ *
+ * @since 0.10.3
  */
 export function DisclosurePanel({ summary, className, children, ...props }: DisclosurePanelProps) {
   return (

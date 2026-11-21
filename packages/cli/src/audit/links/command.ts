@@ -3,6 +3,8 @@ import { runLinkAudit } from "#audit/links/run";
 
 /**
  * The `audit:links` audit: markdown links that point at a missing path or an anchor the target does not offer.
+ *
+ * @since 0.16.0
  */
 export const linksAudit: Audit = {
   name: "links",

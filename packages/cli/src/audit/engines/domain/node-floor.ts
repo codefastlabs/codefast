@@ -45,6 +45,8 @@ export function typesFitFloor(types: NodeVersion, floor: NodeVersion): boolean {
 
 /**
  * Orders two versions, negative when `left` is older.
+ *
+ * @since 0.16.0
  */
 export function compareNodeVersions(left: NodeVersion, right: NodeVersion): number {
   return left[0] - right[0] || left[1] - right[1] || left[2] - right[2];

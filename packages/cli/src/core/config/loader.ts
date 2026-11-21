@@ -33,6 +33,8 @@ async function readConfigModule(configPath: string, fs: Filesystem): Promise<unk
  * Loads and validates the project root's `codefast.config.*`, or an empty config when there is none.
  *
  * @remarks Two config files at the root are refused rather than ranked, so the one that applies is never a guess.
+ *
+ * @since 0.16.0
  */
 export async function loadConfig(rootDir: string, fs: Filesystem): Promise<Result<CodefastConfig, AppError>> {
   const present = configFileNames.filter((fileName) => fs.existsSync(path.join(rootDir, fileName)));

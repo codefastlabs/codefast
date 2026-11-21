@@ -3,6 +3,8 @@ import type { Audit } from "#audit/domain/types";
 
 /**
  * The `audit:di-display-names` audit: `@codefast/di` display names that break the `<namespace>:<Name>` convention.
+ *
+ * @since 0.16.0
  */
 export const diDisplayNamesAudit: Audit = {
   name: "di-display-names",

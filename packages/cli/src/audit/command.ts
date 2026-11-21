@@ -129,6 +129,8 @@ const auditAllSpec: CommandSpec<AuditAllReport, "fix"> = {
 
 /**
  * Creates the `audit` command, which runs every audit, followed by one `audit:<name>` command per audit.
+ *
+ * @since 0.16.0
  */
 export function createAuditCommands(): Array<Command> {
   return [createCommand(auditAllSpec), ...AUDITS.map((audit) => createCommand(auditSpec(audit)))];

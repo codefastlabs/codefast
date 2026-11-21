@@ -34,7 +34,11 @@ const repeatDefinitions = (defineAndRender: (renders: number) => number, renders
   };
 };
 
-/** Builds the `two-renders-*` and `three-renders-*` rows for one library. */
+/**
+ * Builds the `two-renders-*` and `three-renders-*` rows for one library.
+ *
+ * @since 0.11.1
+ */
 export function buildFewRendersScenarios(library: TvLibrary): ReadonlyArray<BenchScenario> {
   const defineAndRenderButton = (renders: number): number => {
     const button = library.tv(buttonVariants, TV_MERGE_ENABLED) as FlatRenderer;

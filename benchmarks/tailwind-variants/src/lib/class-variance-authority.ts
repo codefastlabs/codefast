@@ -3,6 +3,8 @@ import { cva as cvaFromLib, cx as cvaCxFromLib } from "class-variance-authority"
 
 /**
  * `cva` with its generics widened, so the shared fixtures fit it.
+ *
+ * @since 0.11.1
  */
 export const cva = cvaFromLib as (
   base: unknown,
@@ -11,5 +13,7 @@ export const cva = cvaFromLib as (
 
 /**
  * The clsx-style join `class-variance-authority` exports, which its `cn` pairs with `tailwind-merge`.
+ *
+ * @since 0.11.1
  */
 export const cvaCx = cvaCxFromLib as (...classes: ReadonlyArray<unknown>) => string;

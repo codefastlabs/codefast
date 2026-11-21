@@ -13,6 +13,8 @@ const LABEL = "flex items-center gap-2 text-sm leading-none font-medium select-n
 
 /**
  * The arguments of each `cn()` call one timed iteration makes, in order.
+ *
+ * @since 0.11.1
  */
 export const cnTestCalls: ReadonlyArray<ReadonlyArray<unknown>> = [
   [PANEL, undefined],

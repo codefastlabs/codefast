@@ -114,6 +114,8 @@ async function preparePackage(
  *
  * @remarks Meant for an ephemeral CI checkout right before `changeset publish`; it refuses to write over uncommitted
  * tracked changes unless `--force` says so, and a dry run writes nothing.
+ *
+ * @since 0.16.0
  */
 export async function runPublishPrepare(
   context: CommandContext<"dryRun" | "force">,

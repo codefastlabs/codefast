@@ -11,6 +11,8 @@ function describeStamping(outcome: SincePackageOutcome): string {
 
 /**
  * Prints a `since:stamp` report: one row per package, the declarations left unstamped, then the summary.
+ *
+ * @since 0.16.0
  */
 export function presentSinceStampReport(report: SinceStampReport, context: ReportContext<"dryRun">): void {
   presentPackageOutcomes(report.packages, describeStamping);
@@ -30,6 +32,8 @@ export function presentSinceStampReport(report: SinceStampReport, context: Repor
  *
  * @remarks An unstamped declaration fails the run because once its release ships, a later stamp names a version that
  * did not introduce it.
+ *
+ * @since 0.16.0
  */
 export function sinceStampVerdict(report: SinceStampReport): "pass" | "fail" {
   return report.findings.length > 0 || report.packages.some((outcome) => outcome.status === "failed") ? "fail" : "pass";

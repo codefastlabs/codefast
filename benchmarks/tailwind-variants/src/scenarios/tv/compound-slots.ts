@@ -13,7 +13,11 @@ function runLoop(renderer: PaginationRenderer): void {
   }
 }
 
-/** Builds the `compound-slots-*` rows for one library. */
+/**
+ * Builds the `compound-slots-*` rows for one library.
+ *
+ * @since 0.11.1
+ */
 export function buildCompoundSlotsScenarios(library: TvLibrary): ReadonlyArray<BenchScenario> {
   const noMerge = library.tv(compoundSlotsVariants, TV_MERGE_DISABLED) as PaginationRenderer;
   const withMerge = library.tv(compoundSlotsVariants, TV_MERGE_ENABLED) as PaginationRenderer;

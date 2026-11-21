@@ -13,11 +13,15 @@ import { packageJsonFileName } from "#core/workspace/well-known-files";
 
 /**
  * A parsed `package.json`.
+ *
+ * @since 0.16.0
  */
 export type PackageManifest = Readonly<Record<string, unknown>>;
 
 /**
  * A package of the project, its manifest read once for every command.
+ *
+ * @since 0.16.0
  */
 export interface WorkspacePackage {
   /** The manifest's `name`, or the package directory when it declares none. */
@@ -31,6 +35,8 @@ export interface WorkspacePackage {
 
 /**
  * The project a command runs in: its root, its config, and its packages.
+ *
+ * @since 0.16.0
  */
 export interface Workspace {
   readonly rootDir: string;
@@ -43,6 +49,8 @@ export interface Workspace {
 
 /**
  * Reads a `package.json`, naming the file in the error when it is not a JSON object.
+ *
+ * @since 0.16.0
  */
 export function readManifest(fs: Filesystem, manifestPath: string): PackageManifest {
   let parsed: unknown;
@@ -71,6 +79,8 @@ function readPackage(fs: Filesystem, rootDir: string, directory: string): Worksp
 
 /**
  * Resolves the project the working directory sits in, and reads its config and every package manifest.
+ *
+ * @since 0.16.0
  */
 export async function loadWorkspace(
   fs: Filesystem,
@@ -106,6 +116,8 @@ export async function loadWorkspace(
 
 /**
  * Returns the innermost package holding a path, if any does.
+ *
+ * @since 0.16.0
  */
 export function owningPackage(workspace: Workspace, filePath: string): WorkspacePackage | undefined {
   let owner: WorkspacePackage | undefined;
@@ -122,6 +134,8 @@ export function owningPackage(workspace: Workspace, filePath: string): Workspace
 
 /**
  * Returns the packages a target reaches: every package beneath it, or else the one package holding it.
+ *
+ * @since 0.16.0
  */
 export function packagesInTarget(workspace: Workspace, targetPath: string): ReadonlyArray<WorkspacePackage> {
   const beneath = workspace.packages.filter((candidate) => isWithinDirectory(targetPath, candidate.directory));

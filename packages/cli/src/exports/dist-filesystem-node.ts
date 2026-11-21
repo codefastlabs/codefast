@@ -6,6 +6,8 @@ import type { DistFilesystem } from "#exports/domain/dist-filesystem";
 
 /**
  * Creates the `DistFilesystem` the `dist/` scan reads, backed by a `Filesystem`.
+ *
+ * @since 0.16.0
  */
 export function createDistFilesystem(fs: Filesystem): DistFilesystem {
   return {

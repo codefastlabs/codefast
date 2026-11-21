@@ -13,7 +13,11 @@ function runLoop(renderer: DialogRenderer): void {
   }
 }
 
-/** Builds the `extreme-slots-*` rows for one library. */
+/**
+ * Builds the `extreme-slots-*` rows for one library.
+ *
+ * @since 0.11.1
+ */
 export function buildExtremeSlotsScenarios(library: TvLibrary): ReadonlyArray<BenchScenario> {
   const noMerge = library.tv(extremeSlotsVariants, TV_MERGE_DISABLED) as DialogRenderer;
   const withMerge = library.tv(extremeSlotsVariants, TV_MERGE_ENABLED) as DialogRenderer;

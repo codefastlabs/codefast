@@ -7,7 +7,11 @@ import { joinFlatRenders } from "#lib/render-slots";
 import type { TvLibrary } from "#lib/tv-library";
 import type { BenchScenario } from "#scenarios/types";
 
-/** Builds the `extends-*` rows for one library. */
+/**
+ * Builds the `extends-*` rows for one library.
+ *
+ * @since 0.11.1
+ */
 export function buildExtendsScenarios(library: TvLibrary): ReadonlyArray<BenchScenario> {
   const noMerge = library.tv(
     { ...extendsExtensionVariants, extend: library.tv(extendsBaseVariants, TV_MERGE_DISABLED) },

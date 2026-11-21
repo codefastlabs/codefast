@@ -29,6 +29,8 @@ export function firstLineOf(text: string): string {
 
 /**
  * Returns the one-based line a needle first appears on, or `1` when the text does not hold it.
+ *
+ * @since 0.16.0
  */
 export function lineOfText(sourceText: string, needle: string): number {
   const index = sourceText.indexOf(needle);

@@ -96,6 +96,8 @@ function readPackagePatterns(rootDir: string, fs: Filesystem): { include: Array<
  * Lists the absolute package directories of a project, sorted: the `pnpm-workspace.yaml` globs, or the root alone.
  *
  * @remarks A workspace glob the user may not read is skipped with a warning on stderr rather than failing the run.
+ *
+ * @since 0.16.0
  */
 export function listPackageDirectories(root: ResolvedProjectRoot, fs: Filesystem): Array<string> {
   if (root.mode === "single-package") {

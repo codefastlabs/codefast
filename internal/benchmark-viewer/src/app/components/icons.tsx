@@ -47,6 +47,8 @@ export function RefreshCwIcon(props: IconProps) {
 
 /**
  * Renders a leftward chevron icon.
+ *
+ * @since 0.10.3
  */
 export function ChevronLeftIcon(props: IconProps) {
   return (
@@ -58,6 +60,8 @@ export function ChevronLeftIcon(props: IconProps) {
 
 /**
  * Renders a rightward chevron icon.
+ *
+ * @since 0.10.3
  */
 export function ChevronRightIcon(props: IconProps) {
   return (
@@ -69,6 +73,8 @@ export function ChevronRightIcon(props: IconProps) {
 
 /**
  * Renders a download-arrow icon.
+ *
+ * @since 0.10.3
  */
 export function DownloadIcon(props: IconProps) {
   return (
@@ -82,6 +88,8 @@ export function DownloadIcon(props: IconProps) {
 
 /**
  * Renders a push-pin icon.
+ *
+ * @since 0.10.3
  */
 export function PinIcon(props: IconProps) {
   return (
@@ -94,6 +102,8 @@ export function PinIcon(props: IconProps) {
 
 /**
  * Renders a magnifying-glass icon.
+ *
+ * @since 0.10.3
  */
 export function SearchIcon(props: IconProps) {
   return (
@@ -106,6 +116,8 @@ export function SearchIcon(props: IconProps) {
 
 /**
  * Renders a horizontal-sliders icon, for a filter control.
+ *
+ * @since 0.10.3
  */
 export function SlidersHorizontalIcon(props: IconProps) {
   return (

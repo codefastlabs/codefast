@@ -2,6 +2,8 @@ import type { PackageOutcome } from "#core/report";
 
 /**
  * What `publish:prepare` dropped from one package, or would drop on a dry run.
+ *
+ * @since 0.16.0
  */
 export interface PublishPackageOutcome extends PackageOutcome {
   readonly dropped: {
@@ -19,6 +21,8 @@ export interface PublishPackageOutcome extends PackageOutcome {
 
 /**
  * The report of a `publish:prepare` run: one outcome per package the target reaches.
+ *
+ * @since 0.16.0
  */
 export interface PublishPrepareReport {
   readonly packages: ReadonlyArray<PublishPackageOutcome>;

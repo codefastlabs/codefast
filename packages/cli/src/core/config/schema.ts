@@ -2,6 +2,8 @@ import * as z from "zod";
 
 /**
  * A config hook a writing command calls with the absolute paths it wrote, never on a dry run.
+ *
+ * @since 0.16.0
  */
 export type AfterWriteHook = (context: {
   readonly command: string;
@@ -38,17 +40,23 @@ interface ExportsPackageConfig {
 
 /**
  * The `exports` section: per-package options keyed by package name or glob, `false` skipping the package.
+ *
+ * @since 0.16.0
  */
 export type ExportsConfig = Record<string, false | ExportsPackageConfig>;
 
 /**
  * The `since` section: package names or globs keyed to `false`, each skipping the packages it matches.
+ *
+ * @since 0.16.0
  */
 export type SinceConfig = Record<string, false>;
 
 /**
  * One audit's section: the target it scans when the command line names none, and the findings it accepts — each the
  * finding's text as written, or `path:text` for one file. `false` turns the audit off in a full `audit` run.
+ *
+ * @since 0.16.0
  */
 export interface AuditSection {
   target?: string | undefined;
@@ -65,6 +73,8 @@ interface LayersPackageConfig {
 /**
  * One import rule: the forms of importing `module` it bans, in the files its `scope` globs reach (every file when
  * omitted), and a UMD global whose `<name>.*` reference it flags where nothing imports that name.
+ *
+ * @since 0.16.0
  */
 export interface ImportRule {
   module: string;
@@ -88,6 +98,8 @@ interface LayersAuditSection extends AuditSection {
 
 /**
  * The `audit` section: one entry per audit, keyed by its name in camelCase.
+ *
+ * @since 0.16.0
  */
 export interface AuditConfig {
   tailwindRtl?: false | AuditSection | undefined;
@@ -145,6 +157,8 @@ const exportsPackageConfigSchema = z
 
 /**
  * Zod validator for the `exports` section; its output is an {@link ExportsConfig}.
+ *
+ * @since 0.16.0
  */
 export const exportsConfigSchema: z.ZodType<ExportsConfig> = z.record(
   z.string(),

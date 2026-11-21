@@ -6,6 +6,8 @@ import { runExportsGenerate, writesManifests } from "#exports/run";
 
 /**
  * The `exports:generate` command, which writes each package's `package.json#exports` from its built `dist/`.
+ *
+ * @since 0.16.0
  */
 export const exportsGenerateCommand: CommandSpec<ExportsReport, ExportsFlag> = {
   name: "exports:generate",

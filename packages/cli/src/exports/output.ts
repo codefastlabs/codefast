@@ -25,6 +25,8 @@ function modeNote(report: ExportsReport, flags: Readonly<Record<ExportsFlag, boo
 
 /**
  * Prints an `exports:generate` report: one row per package, then the summary.
+ *
+ * @since 0.16.0
  */
 export function presentExportsReport(report: ExportsReport, context: ReportContext<ExportsFlag>): void {
   presentPackageOutcomes(report.packages, describeExports);

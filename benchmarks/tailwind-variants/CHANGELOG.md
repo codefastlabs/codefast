@@ -1,5 +1,18 @@
 # @codefast/benchmark-tailwind-variants
 
+## 0.11.1
+
+### Patch Changes
+
+- [#1210](https://github.com/codefastlabs/codefast/pull/1210) Both `tv()` libraries now run one copy of every shared scenario, built against a per-library adapter, so a timed loop
+  can no longer differ between the subject and upstream, and each bench subprocess loads only its own library. Every
+  shared row declares the classes its workload resolves, and `pnpm bench:parity`, run in CI, fails when the two libraries
+  resolve any of them differently.
+- Updated dependencies:
+  - @internal/benchmark-harness@0.12.1
+  - @internal/benchmark-viewer@0.10.3
+  - @codefast/tailwind-variants@0.11.0
+
 ## 0.11.0
 
 ### Minor Changes

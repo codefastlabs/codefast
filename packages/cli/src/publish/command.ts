@@ -7,6 +7,8 @@ import { runPublishPrepare } from "#publish/run";
 /**
  * The `publish:prepare` command, which slims published packages down to what a consumer installs, right before
  * publish.
+ *
+ * @since 0.16.0
  */
 export const publishPrepareCommand: CommandSpec<PublishPrepareReport, "dryRun" | "force"> = {
   name: "publish:prepare",

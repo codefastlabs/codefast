@@ -4,6 +4,8 @@ import { runEnginesAudit } from "#audit/engines/run";
 
 /**
  * The `audit:engines` audit: each package's Node floor against every dependency's `engines.node`.
+ *
+ * @since 0.16.0
  */
 export const enginesAudit: Audit<EnginesScan> = {
   name: "engines",

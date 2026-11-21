@@ -6,11 +6,15 @@ import type { Result } from "#core/result";
 
 /**
  * What an audit runs with: the shared command context, `--fix` included.
+ *
+ * @since 0.16.0
  */
 export type AuditContext = CommandContext<"fix">;
 
 /**
  * Something a detector found in one file's text, before the run places it in that file.
+ *
+ * @since 0.16.0
  */
 export interface Detection {
   readonly line: number;
@@ -21,6 +25,8 @@ export interface Detection {
 
 /**
  * What an audit's scan found, before the allowlist applies.
+ *
+ * @since 0.16.0
  */
 export interface AuditScan {
   readonly findings: ReadonlyArray<Finding>;
@@ -32,6 +38,8 @@ export interface AuditScan {
 
 /**
  * The report of one audit: the findings past the allowlist, how many it accepted, and what the scan covered.
+ *
+ * @since 0.16.0
  */
 export type AuditReport<Scan extends AuditScan = AuditScan> = Scan & { readonly allowlisted: number };
 
@@ -40,6 +48,8 @@ type AuditConfigKey = keyof NonNullable<CodefastConfig["audit"]>;
 
 /**
  * One audit: its name, its config section, and the scan it runs over the target.
+ *
+ * @since 0.16.0
  */
 export interface Audit<Scan extends AuditScan = AuditScan> {
   readonly name: string;
@@ -51,6 +61,8 @@ export interface Audit<Scan extends AuditScan = AuditScan> {
 /**
  * What one audit left behind in a full `audit` run: its report, why the config turned it off, or the error that kept it
  * from running.
+ *
+ * @since 0.16.0
  */
 export type AuditRun =
   | { readonly name: string; readonly status: "clean" | "findings"; readonly result: AuditReport }
@@ -59,6 +71,8 @@ export type AuditRun =
 
 /**
  * The report of a full `audit` run: one entry per audit, in a fixed order.
+ *
+ * @since 0.16.0
  */
 export interface AuditAllReport {
   readonly audits: ReadonlyArray<AuditRun>;

@@ -3,6 +3,8 @@ import { runLayersAudit } from "#audit/layers/run";
 
 /**
  * The `audit:layers` audit: value imports that point up a package's configured layers.
+ *
+ * @since 0.16.0
  */
 export const layersAudit: Audit = {
   name: "layers",

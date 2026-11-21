@@ -3,6 +3,8 @@ import { runPublishAudit } from "#audit/publish/run";
 
 /**
  * The `audit:publish` audit: what would break a consumer's install of a published package.
+ *
+ * @since 0.16.0
  */
 export const publishAudit: Audit = {
   name: "publish",

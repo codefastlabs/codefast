@@ -17,6 +17,8 @@ const noExports: ExportsPackageOutcome["exports"] = { total: 0, modules: 0, styl
 
 /**
  * Regenerates one package's `package.json#exports` from its `dist/`, writing it unless `write` is off.
+ *
+ * @since 0.16.0
  */
 export async function syncPackageExports(
   fs: Filesystem,

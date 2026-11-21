@@ -51,6 +51,8 @@ type WorkspaceManifest = {
 
 /**
  * The scan of `audit:engines`, which also lists every floor it read, for planning the CI legs that run on each.
+ *
+ * @since 0.16.0
  */
 export interface EnginesScan extends AuditScan {
   readonly floors: ReadonlyArray<PackageEngineFloor>;
@@ -78,6 +80,8 @@ function findingOf(fs: Filesystem, workspace: Workspace, violation: EngineViolat
  * admit every release from the floor up, short-lived odd lines aside; that of every dev dependency, the floor and the
  * newest release CI tests on. The `@types/node` the lockfile resolves must declare nothing the floor lacks. The
  * workspace root's floor, never listed among `floors`, must be admitted by every dependency any package installs.
+ *
+ * @since 0.16.0
  */
 export function inspectEngines(
   fs: Filesystem,
