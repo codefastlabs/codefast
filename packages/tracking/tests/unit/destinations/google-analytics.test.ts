@@ -377,9 +377,7 @@ describe("ensureGtag / loadGtagScript", () => {
 
     const layer = dataLayerNamed("appDataLayer");
     const configCall = Array.from(layer[1]!);
-    const script = document.querySelector(
-      'script[src^="https://www.googletagmanager.com/gtag/js"]',
-    ) as HTMLScriptElement | null;
+    const script = document.querySelector<HTMLScriptElement>('script[src^="https://www.googletagmanager.com/gtag/js"]');
 
     expect(configCall).toEqual(["config", "G-TEST123", { debug_mode: true }]);
     expect(script?.src).toContain("id=G-TEST123");
