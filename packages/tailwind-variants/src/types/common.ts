@@ -35,6 +35,8 @@ export type PlainClassValue = ReadonlyArray<PlainClassValue> | bigint | boolean 
 
 /**
  * A function that resolves Tailwind conflicts in one space-separated class string.
+ *
+ * @since 0.11.0
  */
 export type ClassMerger = (classes: string) => string;
 
@@ -65,5 +67,7 @@ export interface TailwindVariantsOptions {
 /**
  * The configuration keys a `tv` overload declares absent, so a configuration held in a variable selects it only
  * when it leaves them out, exactly as a fresh literal would.
+ *
+ * @since 0.11.0
  */
 export type AbsentKeys<Key extends PropertyKey> = { readonly [Name in Key]?: undefined };

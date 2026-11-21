@@ -25,6 +25,8 @@ import type { BenchScenario } from "#scenarios/types";
  *
  * @param library - The library every row drives.
  * @param controls - Rows only this library has, run right after the `repeat-*` rows they control for.
+ *
+ * @since 0.11.1
  */
 export function collectTvScenarios(
   library: TvLibrary,

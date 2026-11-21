@@ -36,6 +36,8 @@ type SlotClassResolvers<Variants extends VariantSchema, Slots extends SlotSchema
 
 /**
  * The resolver of a component without slots, which answers a call with one class string.
+ *
+ * @since 0.11.0
  */
 export interface FlatVariantResolver<Variants extends VariantSchema> {
   /** The configuration this resolver runs, with any `extend` chain already merged in; what `extend` reads. */
@@ -49,6 +51,8 @@ export interface FlatVariantResolver<Variants extends VariantSchema> {
 
 /**
  * The resolver of a component with slots, which answers a call with one class resolver per slot.
+ *
+ * @since 0.11.0
  */
 export interface SlotVariantResolver<Variants extends VariantSchema, Slots extends SlotSchema> {
   /** The configuration this resolver runs, with any `extend` chain already merged in; what `extend` reads. */

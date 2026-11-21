@@ -13,6 +13,8 @@ import type { BenchScenario } from "#scenarios/types";
  *
  * @remarks Minus the define-only row this is the first render alone; the descriptors keep the ratio off
  * the aggregates because the work is per definition, not per render.
+ *
+ * @since 0.11.1
  */
 export function buildFirstRenderScenarios(library: TvLibrary): ReadonlyArray<BenchScenario> {
   const defineAndRenderButton = (): number =>

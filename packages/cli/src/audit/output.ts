@@ -9,6 +9,8 @@ function count(amount: number, noun: string): string {
 
 /**
  * Returns the one-line account of an audit report: its findings, what it scanned, and what it accepted or fixed.
+ *
+ * @since 0.16.0
  */
 export function describeAuditReport(report: AuditReport): string {
   const scanned = [
@@ -25,6 +27,8 @@ export function describeAuditReport(report: AuditReport): string {
 
 /**
  * Prints one audit's findings, then its summary line.
+ *
+ * @since 0.16.0
  */
 export function presentAuditReport(name: string, report: AuditReport, elapsedSeconds: number): void {
   presentFindings(report.findings);
@@ -33,6 +37,8 @@ export function presentAuditReport(name: string, report: AuditReport, elapsedSec
 
 /**
  * Prints every audit of a full run as one line under its name with its findings beneath, then the summary.
+ *
+ * @since 0.16.0
  */
 export function presentAuditAll(report: AuditAllReport, elapsedSeconds: number): void {
   for (const run of report.audits) {

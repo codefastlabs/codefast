@@ -4,6 +4,8 @@ import type { Detection } from "#audit/domain/types";
 
 /**
  * The package a file belongs to, as its manifest names and versions it.
+ *
+ * @since 0.16.0
  */
 export interface PackageRelease {
   readonly name: string;

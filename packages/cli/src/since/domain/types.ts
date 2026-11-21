@@ -5,6 +5,8 @@ import type { Finding, PackageOutcome } from "#core/report";
  *
  * @remarks A block written there would stack under a note or split a directive from the code it governs, so the
  * writer leaves the whole file as it is until a person writes that doc block.
+ *
+ * @since 0.16.0
  */
 export interface BlockedDeclaration {
   readonly filePath: string;
@@ -14,6 +16,8 @@ export interface BlockedDeclaration {
 
 /**
  * What stamping one file did.
+ *
+ * @since 0.16.0
  */
 export interface SinceFileResult {
   readonly filePath: string;
@@ -24,6 +28,8 @@ export interface SinceFileResult {
 
 /**
  * What `since:stamp` did to one package.
+ *
+ * @since 0.16.0
  */
 export interface SincePackageOutcome extends PackageOutcome {
   /** The version stamped, read from the package's own manifest. */
@@ -34,6 +40,8 @@ export interface SincePackageOutcome extends PackageOutcome {
 
 /**
  * The report of a `since:stamp` run: one outcome per package, and every declaration left unstamped.
+ *
+ * @since 0.16.0
  */
 export interface SinceStampReport {
   readonly packages: ReadonlyArray<SincePackageOutcome>;

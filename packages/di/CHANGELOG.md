@@ -1,5 +1,14 @@
 # @codefast/di
 
+## 0.15.0
+
+### Minor Changes
+
+- [#1188](https://github.com/codefastlabs/codefast/pull/1188) Every `@codefast/*` package now requires Node.js 24.15 or later and drops Node 22. The packages ship as one set, so they
+  share one floor instead of each sitting on its own 22.x release. `@codefast/typescript-config` removes the `node22.json`
+  and `node22-dom.json` overlays; extend a preset alone. `codefast audit engines` reports a published package whose floor
+  differs from the highest one any published package declares.
+
 ## 0.14.0
 
 ### Minor Changes

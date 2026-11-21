@@ -3,6 +3,8 @@ import { runRtlAudit } from "#audit/tailwind-rtl/run";
 
 /**
  * The `audit:tailwind-rtl` audit: physical-direction Tailwind classes that should be logical or `rtl:`-paired.
+ *
+ * @since 0.16.0
  */
 export const tailwindRtlAudit: Audit = {
   name: "tailwind-rtl",

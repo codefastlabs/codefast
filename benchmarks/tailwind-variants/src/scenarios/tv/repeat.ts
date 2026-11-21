@@ -26,7 +26,11 @@ function runSlotLoop(renderer: CardRenderer): void {
   }
 }
 
-/** Builds the `repeat-*` rows for one library. */
+/**
+ * Builds the `repeat-*` rows for one library.
+ *
+ * @since 0.11.1
+ */
 export function buildRepeatScenarios(library: TvLibrary): ReadonlyArray<BenchScenario> {
   const flatNoMerge = library.tv(buttonVariants, TV_MERGE_DISABLED) as FlatRenderer;
   const flatWithMerge = library.tv(buttonVariants, TV_MERGE_ENABLED) as FlatRenderer;

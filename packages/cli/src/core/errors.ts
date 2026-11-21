@@ -29,6 +29,8 @@ export class AppError {
 
 /**
  * Wraps a value a run threw, which no `Result` carried, as an `UNEXPECTED` error that keeps it as the cause.
+ *
+ * @since 0.16.0
  */
 export function unexpectedError(caughtError: unknown): AppError {
   return new AppError("UNEXPECTED", messageFrom(caughtError), caughtError);

@@ -21,6 +21,8 @@ function describeDropped({ status, dropped }: PublishPackageOutcome): string {
 
 /**
  * Prints a `publish:prepare` report: one row per package, then the summary.
+ *
+ * @since 0.16.0
  */
 export function presentPublishPrepareReport(
   report: PublishPrepareReport,

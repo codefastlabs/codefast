@@ -61,6 +61,8 @@ export type EngineViolation =
 /**
  * Returns the text that identifies a violation in its manifest, which an allowlist entry matches, and the needle that
  * finds its line there.
+ *
+ * @since 0.16.0
  */
 export function violationText(violation: EngineViolation): { readonly text: string; readonly needle: string } {
   switch (violation.kind) {
@@ -81,6 +83,8 @@ export function violationText(violation: EngineViolation): { readonly text: stri
 
 /**
  * Returns what a violation breaks and how to fix it, in one line.
+ *
+ * @since 0.16.0
  */
 export function describeViolation(violation: EngineViolation): string {
   switch (violation.kind) {

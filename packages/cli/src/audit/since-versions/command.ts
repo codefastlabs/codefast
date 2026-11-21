@@ -3,6 +3,8 @@ import { runSinceVersionsAudit } from "#audit/since-versions/run";
 
 /**
  * The `audit:since-versions` audit: `@since` tags naming no version, or one newer than their package's own.
+ *
+ * @since 0.16.0
  */
 export const sinceVersionsAudit: Audit = {
   name: "since-versions",

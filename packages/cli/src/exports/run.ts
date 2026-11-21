@@ -9,6 +9,8 @@ import { syncPackageExports } from "#exports/sync-package";
 
 /**
  * Returns whether a run writes the manifests: neither a dry run nor a check does.
+ *
+ * @since 0.16.0
  */
 export function writesManifests(flags: Readonly<Record<ExportsFlag, boolean>>): boolean {
   return !flags.dryRun && !flags.check;
@@ -16,6 +18,8 @@ export function writesManifests(flags: Readonly<Record<ExportsFlag, boolean>>): 
 
 /**
  * Regenerates the exports map of every package the target reaches.
+ *
+ * @since 0.16.0
  */
 export async function runExportsGenerate(
   context: CommandContext<ExportsFlag>,

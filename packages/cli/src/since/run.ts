@@ -89,6 +89,8 @@ function stampPackage(
  * Stamps `@since <version>` on the exported declarations of every package the target reaches.
  *
  * @remarks The version is each package's own; a declaration a `//` comment blocks holds its file back and is reported.
+ *
+ * @since 0.16.0
  */
 export async function runSinceStamp(context: CommandContext<"dryRun">): Promise<Result<SinceStampReport, AppError>> {
   const writer = new SinceWriter(context.fs);

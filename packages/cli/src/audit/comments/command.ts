@@ -3,6 +3,8 @@ import type { Audit } from "#audit/domain/types";
 
 /**
  * The `audit:comments` audit: comments off the repo's conventions, whose divider forms `--fix` rewrites.
+ *
+ * @since 0.16.0
  */
 export const commentsAudit: Audit = {
   name: "comments",

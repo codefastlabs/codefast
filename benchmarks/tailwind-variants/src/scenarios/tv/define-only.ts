@@ -11,6 +11,8 @@ import type { BenchScenario } from "#scenarios/types";
  *
  * @remarks An eager library compiles here and a lazy one defers to its first render, so the descriptors
  * keep the ratio off the aggregates. A definition renders nothing, so these rows have no output to compare.
+ *
+ * @since 0.11.1
  */
 export function buildDefineOnlyScenarios(library: TvLibrary): ReadonlyArray<BenchScenario> {
   const defineButton = (): unknown => library.tv(buttonVariants, TV_MERGE_ENABLED);

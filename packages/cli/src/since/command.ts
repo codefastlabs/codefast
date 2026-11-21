@@ -6,6 +6,8 @@ import { runSinceStamp } from "#since/run";
 
 /**
  * The `since:stamp` command, which stamps `@since <version>` on exported declarations that lack one.
+ *
+ * @since 0.16.0
  */
 export const sinceStampCommand: CommandSpec<SinceStampReport, "dryRun"> = {
   name: "since:stamp",

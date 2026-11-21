@@ -92,6 +92,8 @@ export const toPlanClasses = (value: ClassValue, slotIndexByName: Record<string,
  * The classes a call or a compound definition adds: its `className`, or its `class` when it gives none.
  *
  * @remarks `class` is read only when `className` is absent, so a call forwarding `className` pays for one lookup.
+ *
+ * @since 0.11.0
  */
 export const pickClassProp = (definition: { readonly class?: unknown; readonly className?: unknown }): ClassValue => {
   const className = definition.className as ClassValue;
@@ -133,6 +135,8 @@ export const toVariantKey = (value: unknown): string | undefined => {
 
 /**
  * The key a group reads when a call omits its variant: the configured default's key, or `"false"` without one.
+ *
+ * @since 0.11.0
  */
 export const toDefaultKey = (configuredDefault: unknown): string => {
   if (configuredDefault === undefined || configuredDefault === null) {

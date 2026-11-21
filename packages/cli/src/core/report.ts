@@ -6,6 +6,8 @@ import { paint } from "#core/style";
 
 /**
  * Something at a location in the project that a person must look at.
+ *
+ * @since 0.16.0
  */
 export interface Finding {
   /** The file as a POSIX path from the root. */
@@ -23,6 +25,8 @@ type PackageStatus = "changed" | "unchanged" | "skipped" | "failed";
 
 /**
  * The outcome of a writing command on one package.
+ *
+ * @since 0.16.0
  */
 export interface PackageOutcome {
   readonly name: string;
@@ -43,6 +47,8 @@ function clip(text: string): string {
 
 /**
  * Prints findings grouped under their file, one `line: text → message` row each.
+ *
+ * @since 0.16.0
  */
 export function presentFindings(findings: ReadonlyArray<Finding>): void {
   let file: string | undefined;
@@ -64,6 +70,8 @@ const statusMarks: Readonly<Record<PackageStatus, readonly [style: "cyan" | "gre
 
 /**
  * Prints one row per package outcome: its mark, its name, and what happened to it.
+ *
+ * @since 0.16.0
  */
 export function presentPackageOutcomes<Outcome extends PackageOutcome>(
   outcomes: ReadonlyArray<Outcome>,
@@ -80,6 +88,8 @@ export function presentPackageOutcomes<Outcome extends PackageOutcome>(
 
 /**
  * Counts package outcomes by status, as the summary of a writing command reads them.
+ *
+ * @since 0.16.0
  */
 export function countPackageOutcomes(outcomes: ReadonlyArray<PackageOutcome>): string {
   const counts: Array<string> = [];
@@ -94,6 +104,8 @@ export function countPackageOutcomes(outcomes: ReadonlyArray<PackageOutcome>): s
 
 /**
  * Prints the one summary line every command ends with: a pass or fail mark, the text, and the time it took.
+ *
+ * @since 0.16.0
  */
 export function presentSummary(passed: boolean, text: string, elapsedSeconds: number): void {
   const mark = passed ? paint("green", "✓") : paint("red", "✗");
@@ -102,6 +114,8 @@ export function presentSummary(passed: boolean, text: string, elapsedSeconds: nu
 
 /**
  * Returns the verdict of a writing command: it fails when any package failed, or would change when `failOnChange`.
+ *
+ * @since 0.16.0
  */
 export function packagesVerdict(outcomes: ReadonlyArray<PackageOutcome>, failOnChange = false): Verdict {
   const fails = (outcome: PackageOutcome): boolean =>
@@ -111,6 +125,8 @@ export function packagesVerdict(outcomes: ReadonlyArray<PackageOutcome>, failOnC
 
 /**
  * Returns the absolute paths a writing command wrote, none on a dry run.
+ *
+ * @since 0.16.0
  */
 export function writtenPackageFiles(
   outcomes: ReadonlyArray<PackageOutcome>,

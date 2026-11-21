@@ -3,6 +3,8 @@ import picomatch from "picomatch";
 /**
  * Returns the entry a per-package config record holds for a package: its exact name first, else the first glob key
  * that matches it, else `undefined`.
+ *
+ * @since 0.16.0
  */
 export function selectPackageConfig<Value>(
   record: Readonly<Record<string, Value>> | undefined,

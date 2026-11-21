@@ -8,6 +8,8 @@ import { err, ok } from "#core/result";
 
 /**
  * What a command acts on: a file or directory inside the project root.
+ *
+ * @since 0.16.0
  */
 export interface Target {
   readonly path: string;
@@ -19,6 +21,8 @@ export interface Target {
 /**
  * Resolves a command's target: the given path against the working directory, else a configured default against the
  * root, else the root itself.
+ *
+ * @since 0.16.0
  */
 export function resolveTarget(
   fs: Filesystem,

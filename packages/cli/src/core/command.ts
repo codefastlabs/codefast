@@ -23,11 +23,15 @@ const JSON_SCHEMA_VERSION = 3;
 
 /**
  * How a report ends its run: it passed, it reports a failure, or the run could not do its job.
+ *
+ * @since 0.16.0
  */
 export type Verdict = "pass" | "fail" | "error";
 
 /**
  * What a command's run receives: the project, what it acts on, and the flags it declared.
+ *
+ * @since 0.16.0
  */
 export interface CommandContext<Flag extends string = never> {
   readonly fs: Filesystem;
@@ -43,6 +47,8 @@ export interface CommandContext<Flag extends string = never> {
 
 /**
  * The context a report is presented in: the run's, and how long the run took.
+ *
+ * @since 0.16.0
  */
 export interface ReportContext<Flag extends string = never> extends CommandContext<Flag> {
   readonly elapsedSeconds: number;
@@ -53,6 +59,8 @@ export interface ReportContext<Flag extends string = never> extends CommandConte
  *
  * @remarks Every command shares the rest — the project and target resolution, `--json` and `--verbose`, error
  * reporting, the `afterWrite` hook and the exit code — so no command writes any of it.
+ *
+ * @since 0.16.0
  */
 export interface CommandSpec<Report, Flag extends string = never> {
   readonly name: string;
@@ -91,6 +99,8 @@ function readFlags<Flag extends string>(
 /**
  * Derives a context for a command run on behalf of another, resolving the target its own config names when the
  * command line named none.
+ *
+ * @since 0.16.0
  */
 export function deriveContext<Flag extends string>(
   parent: CommandContext<string>,
@@ -235,6 +245,8 @@ async function execute<Report, Flag extends string>(
 
 /**
  * Creates the Commander command for a spec, wiring `[target]`, `--json`, `--verbose` and its own flags.
+ *
+ * @since 0.16.0
  */
 export function createCommand<Report, Flag extends string>(
   spec: CommandSpec<Report, Flag>,

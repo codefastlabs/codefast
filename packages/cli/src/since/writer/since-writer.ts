@@ -53,6 +53,8 @@ function lineAboveOffset(sourceText: string, offset: number): string | undefined
 
 /**
  * The writer that adds missing `@since` tags to a file's exported declarations.
+ *
+ * @since 0.16.0
  */
 export class SinceWriter {
   private readonly sinceDocumentationTag = "@since";

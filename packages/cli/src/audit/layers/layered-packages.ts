@@ -25,6 +25,8 @@ const DEFAULT_LAYERS_ROOT = "src";
  *
  * @remarks A configured name no workspace package carries, an entry nested below the root or placed
  * twice, and a root that does not exist are each refused here, before anything is scanned.
+ *
+ * @since 0.16.0
  */
 export function resolveLayeredPackages(
   fs: Filesystem,

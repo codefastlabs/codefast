@@ -3,6 +3,8 @@ import type { Finding } from "#core/report";
 
 /**
  * Places a file's detections in that file, as findings.
+ *
+ * @since 0.16.0
  */
 export function findingsIn(file: string, detections: ReadonlyArray<Detection>): Array<Finding> {
   return detections.map(({ line, raw, reason }) => ({ file, line, text: raw, message: reason }));
@@ -10,6 +12,8 @@ export function findingsIn(file: string, detections: ReadonlyArray<Detection>): 
 
 /**
  * Returns the scan of an audit that reads files and fixes nothing.
+ *
+ * @since 0.16.0
  */
 export function fileScan(findings: ReadonlyArray<Finding>, scannedFiles: number): AuditScan {
   return { findings, scannedFiles, scannedPackages: 0, fixedFiles: [] };
@@ -17,6 +21,8 @@ export function fileScan(findings: ReadonlyArray<Finding>, scannedFiles: number)
 
 /**
  * Applies an allowlist to a scan: an entry is a finding's text as written, or `file:text` for one file.
+ *
+ * @since 0.16.0
  */
 export function applyAllowlist<Scan extends AuditScan>(
   scan: Scan,

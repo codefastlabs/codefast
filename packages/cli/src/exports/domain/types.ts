@@ -67,6 +67,8 @@ export interface GenerateExportsResult {
 
 /**
  * The exports an `exports:generate` run built for one package.
+ *
+ * @since 0.16.0
  */
 export interface ExportsPackageOutcome extends PackageOutcome {
   readonly exports: {
@@ -81,11 +83,15 @@ export interface ExportsPackageOutcome extends PackageOutcome {
 
 /**
  * The flags `exports:generate` takes: `--dry-run` reports what would change, and `--check` fails on it too.
+ *
+ * @since 0.16.0
  */
 export type ExportsFlag = "dryRun" | "check";
 
 /**
  * The report of an `exports:generate` run: one outcome per package the target reaches.
+ *
+ * @since 0.16.0
  */
 export interface ExportsReport {
   readonly packages: ReadonlyArray<ExportsPackageOutcome>;

@@ -19,6 +19,8 @@ function holdsDocComments(filePath: string): boolean {
 /**
  * Scans the target's comments for `@since` tags their package cannot have stamped, each judged against the version
  * its own manifest declares.
+ *
+ * @since 0.16.0
  */
 export function runSinceVersionsAudit({ fs, workspace, target }: AuditContext): Result<AuditScan, AppError> {
   try {
