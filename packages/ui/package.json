@@ -598,7 +598,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@codefast/tailwind-variants": "workspace:*",
+    "@codefast/tv": "workspace:*",
     "@daypicker/react": "catalog:",
     "cmdk": "catalog:",
     "cn": "catalog:",

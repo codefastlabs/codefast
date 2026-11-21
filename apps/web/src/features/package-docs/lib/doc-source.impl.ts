@@ -112,7 +112,7 @@ export const PACKAGE_ORDER: ReadonlyArray<string> = [
   "di",
   "di-testing",
   "ui",
-  "tailwind-variants",
+  "tv",
   "theme",
   "tracking",
   "cli",

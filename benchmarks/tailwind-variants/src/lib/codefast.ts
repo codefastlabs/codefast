@@ -1,5 +1,5 @@
-/** `@codefast/tailwind-variants` as the shared scenarios drive it; the only module its subprocess loads a library from. */
-import { cn, createTV, tv } from "@codefast/tailwind-variants";
+/** `@codefast/tv` as the shared scenarios drive it; the only module its subprocess loads a library from. */
+import { cn, createTV, tv } from "@codefast/tv";
 
 import type { TvLibrary, TvOptions } from "#lib/tv-library";
 

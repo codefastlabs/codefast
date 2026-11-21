@@ -70,10 +70,10 @@ A document that concerns exactly one package stays in that package rather than m
 - `packages/di/ARCHITECTURE.md` — the source of truth for `resolution/`, read it before touching a hot path; what each
   shape costs is measured empirically by the `benchmarks/di` suite rather than recorded in a doc alongside it
 - `packages/tracking/spec/` — the behavioural contract
-- `packages/cli/ARCHITECTURE.md`, `packages/tailwind-variants/ARCHITECTURE.md` — the internal design doc for those
-  packages, in the same role as `packages/di/ARCHITECTURE.md` above
+- `packages/cli/ARCHITECTURE.md`, `packages/tv/ARCHITECTURE.md` — the internal design doc for those packages, in the
+  same role as `packages/di/ARCHITECTURE.md` above
 - `packages/*/DECISIONS.md` — a settled design/architecture decision for that package (the package-local mirror of
-  `decisions/` above): `packages/cli/DECISIONS.md`, `packages/tailwind-variants/DECISIONS.md`
+  `decisions/` above): `packages/cli/DECISIONS.md`, `packages/tv/DECISIONS.md`
 - `packages/*/README.md`, `packages/*/CHANGELOG.md`
 
 `docs/` is for documents that cut across several packages, or that are about the infrastructure around the repo (the

@@ -4,7 +4,7 @@ import { assertSubjectMeasuredSomething } from "#parent/assert-subject-measured"
 import { BENCH_ONLY_ENV_KEY, BENCH_TIER_ENV_KEY } from "#shared/env-keys";
 import type { ScenarioTrialResult, TrialPayload } from "#shared/protocol";
 
-const SUBJECT = "@codefast/tailwind-variants";
+const SUBJECT = "@codefast/tv";
 
 function trialWithScenarioCount(scenarioCount: number): TrialPayload {
   return {

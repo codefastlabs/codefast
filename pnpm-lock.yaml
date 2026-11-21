@@ -708,9 +708,9 @@ importers:
 
   benchmarks/tailwind-variants:
     dependencies:
-      '@codefast/tailwind-variants':
+      '@codefast/tv':
         specifier: workspace:*
-        version: link:../../packages/tailwind-variants
+        version: link:../../packages/tv
       '@internal/benchmark-harness':
         specifier: workspace:*
         version: link:../../internal/benchmark-harness
@@ -748,12 +748,12 @@ importers:
       '@codefast/di':
         specifier: workspace:*
         version: link:../../packages/di
-      '@codefast/tailwind-variants':
-        specifier: workspace:*
-        version: link:../../packages/tailwind-variants
       '@codefast/theme':
         specifier: workspace:*
         version: link:../../packages/theme
+      '@codefast/tv':
+        specifier: workspace:*
+        version: link:../../packages/tv
       '@codefast/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -864,9 +864,9 @@ importers:
 
   internal/benchmark-viewer:
     dependencies:
-      '@codefast/tailwind-variants':
+      '@codefast/tv':
         specifier: workspace:*
-        version: link:../../packages/tailwind-variants
+        version: link:../../packages/tv
       '@hono/node-server':
         specifier: 'catalog:'
         version: 2.1.6(hono@4.13.16)
@@ -1117,33 +1117,6 @@ importers:
         specifier: 'catalog:'
         version: 5.1.0(@types/node@24.13.6)(@vitest/coverage-v8@5.1.0)(jsdom@31.0.1)(vite@8.3.8(@types/node@24.13.6)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
 
-  packages/tailwind-variants:
-    devDependencies:
-      '@codefast/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.13.6
-      '@vitest/coverage-v8':
-        specifier: 'catalog:'
-        version: 5.1.0(vitest@5.1.0)
-      cn:
-        specifier: 'catalog:'
-        version: 0.5.2
-      tailwind-merge:
-        specifier: 'catalog:'
-        version: 3.7.0
-      typescript:
-        specifier: 'catalog:'
-        version: 7.0.2
-      vite:
-        specifier: 'catalog:'
-        version: 8.3.8(@types/node@24.13.6)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
-      vitest:
-        specifier: 'catalog:'
-        version: 5.1.0(@types/node@24.13.6)(@vitest/coverage-v8@5.1.0)(jsdom@31.0.1)(vite@8.3.8(@types/node@24.13.6)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
-
   packages/theme:
     dependencies:
       '@types/react':
@@ -1260,6 +1233,33 @@ importers:
         specifier: 'catalog:'
         version: 4.6.7
 
+  packages/tv:
+    devDependencies:
+      '@codefast/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.13.6
+      '@vitest/coverage-v8':
+        specifier: 'catalog:'
+        version: 5.1.0(vitest@5.1.0)
+      cn:
+        specifier: 'catalog:'
+        version: 0.5.2
+      tailwind-merge:
+        specifier: 'catalog:'
+        version: 3.7.0
+      typescript:
+        specifier: 'catalog:'
+        version: 7.0.2
+      vite:
+        specifier: 'catalog:'
+        version: 8.3.8(@types/node@24.13.6)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
+      vitest:
+        specifier: 'catalog:'
+        version: 5.1.0(@types/node@24.13.6)(@vitest/coverage-v8@5.1.0)(jsdom@31.0.1)(vite@8.3.8(@types/node@24.13.6)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
+
   packages/typescript-config:
     dependencies:
       typescript:
@@ -1268,9 +1268,9 @@ importers:
 
   packages/ui:
     dependencies:
-      '@codefast/tailwind-variants':
+      '@codefast/tv':
         specifier: workspace:*
-        version: link:../tailwind-variants
+        version: link:../tv
       '@daypicker/react':
         specifier: 'catalog:'
         version: 10.0.2(@types/react@19.3.0)(react@19.3.1)

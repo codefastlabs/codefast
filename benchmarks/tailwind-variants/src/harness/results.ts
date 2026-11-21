@@ -23,7 +23,7 @@ const TV_RESULTS_SUITE: ResultsSuite<TvCompetitorName> = {
     coverage:
       "a `—` below is a row the library cannot express — `cva` has no slots, no extends and no factory — or a control only codefast runs, never a row nobody wrote.",
     environment:
-      "Each library runs through its default entry with the merge flag passed explicitly, so the two `tv()` libraries differ in implementation and not in configuration; `cva` has no merge option, so its with-merge rows call `tailwind-merge` after it, the usual production pairing, while `@codefast/tailwind-variants` merges with `cn`, its default.",
+      "Each library runs through its default entry with the merge flag passed explicitly, so the two `tv()` libraries differ in implementation and not in configuration; `cva` has no merge option, so its with-merge rows call `tailwind-merge` after it, the usual production pairing, while `@codefast/tv` merges with `cn`, its default.",
     userFacingIntro:
       "Most rows below price one render of a component with a selection the library has already seen, and many of them run faster than any frame could notice. Three measurements are the ones an application feels, so they lead: what defining its components costs as a module loads, what one render costs, and what the library adds to a browser bundle.",
     bundleLead: (bundler) =>

@@ -1,4 +1,4 @@
-import { createTV } from "@codefast/tailwind-variants";
+import { createTV } from "@codefast/tv";
 import { extendTailwindMerge } from "cn/config";
 
 /**

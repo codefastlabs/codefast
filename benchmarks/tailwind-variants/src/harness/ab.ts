@@ -1,4 +1,4 @@
-/** Runs the shared paired-A/B driver with `@codefast/tailwind-variants` as the subject. */
+/** Runs the shared paired-A/B driver with `@codefast/tv` as the subject. */
 
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -12,5 +12,5 @@ const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..",
 runBenchAbMain(process.argv.slice(2), {
   packageRootDirectory,
   subjectLibraryName: CODEFAST_TV.libraryName,
-  subjectSourcePath: "packages/tailwind-variants/src",
+  subjectSourcePath: "packages/tv/src",
 });

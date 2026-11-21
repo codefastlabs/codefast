@@ -49,10 +49,10 @@ by CI on that floor.
 ## Browsers
 
 Code that runs in a browser supports **Chrome and Edge 136, Firefox 136, and Safari 18.4 (macOS and iOS) or later**.
-That covers `@codefast/ui`, `@codefast/theme`, the client half of `@codefast/tracking`, and the universal
-`@codefast/tailwind-variants` and `@codefast/di`. These are the first releases that ship every ES2025 builtin: iterator
-helpers reached Safari in 18.4, `RegExp.escape` reached Chrome in 136, and `Intl.DurationFormat` reached Firefox in 136.
-As with Node, the floor is what every current major browser ships, not what the oldest browser in use ships.
+That covers `@codefast/ui`, `@codefast/theme`, the client half of `@codefast/tracking`, and the universal `@codefast/tv`
+and `@codefast/di`. These are the first releases that ship every ES2025 builtin: iterator helpers reached Safari in
+18.4, `RegExp.escape` reached Chrome in 136, and `Intl.DurationFormat` reached Firefox in 136. As with Node, the floor
+is what every current major browser ships, not what the oldest browser in use ships.
 
 - **The DOM presets' `lib`** is `DOM`, `DOM.Iterable` and `ES2025`, so an ECMAScript builtin past the floor is a type
   error.

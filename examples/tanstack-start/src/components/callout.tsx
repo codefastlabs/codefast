@@ -1,8 +1,8 @@
-import { tv } from "@codefast/tailwind-variants";
-import type { VariantProps } from "@codefast/tailwind-variants";
+import { tv } from "@codefast/tv";
+import type { VariantProps } from "@codefast/tv";
 import type { ComponentProps, ReactElement } from "react";
 
-// A component styled entirely with @codefast/tailwind-variants `tv()`: a single source of
+// A component styled entirely with @codefast/tv `tv()`: a single source of
 // truth for the base classes plus a typed `tone`/`emphasis` matrix. `VariantProps` derives
 // the prop types from this config, so the variants stay in sync with the component API.
 const callout = tv({

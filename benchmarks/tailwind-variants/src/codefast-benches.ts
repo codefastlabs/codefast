@@ -1,4 +1,4 @@
-/** `@codefast/tailwind-variants` bench subprocess (see `src/harness/run.ts`). */
+/** `@codefast/tv` bench subprocess (see `src/harness/run.ts`). */
 import { BENCHMARK_SUITE_DEFAULT_BENCH_OPTIONS } from "@internal/benchmark-harness/child/bench-options";
 import {
   exitBenchmarkChildProcessOnFailure,

@@ -1,4 +1,4 @@
-# `@codefast/tailwind-variants` — design decisions
+# `@codefast/tv` — design decisions
 
 Why the package exists and the choices that fix its API. [`ARCHITECTURE.md`](./ARCHITECTURE.md) is the source of truth
 for the internal shape — the compiled plan, the selection cache, which shapes are load-bearing;

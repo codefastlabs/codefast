@@ -1,4 +1,4 @@
-/** The public surface of `@codefast/tailwind-variants`: `tv`, `createTV`, the class utilities, and their types. */
+/** The public surface of `@codefast/tv`: `tv`, `createTV`, the class utilities, and their types. */
 
 export { createTV, tv } from "#tv";
 

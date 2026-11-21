@@ -153,10 +153,10 @@ Rules: **no tests under** `src/**`; no test files directly under `tests/` (must 
   on a bare `"./src/*"`; and each `packages/*` tsconfig sets `"customConditions": ["source"]` to pick the `src` lane,
   since TS's default conditions (`import`, `types`) match the `types` lane and would silently type-check `src/` against
   stale `dist/*.d.ts`. Keep `./src/*` first in the array — `#styles.css?url` resolves on that candidate alone. That
-  condition also makes cross-package imports (`@codefast/ui` → `@codefast/tailwind-variants`) resolve to the other
-  package's `src`, so `check-types` no longer needs a prior build; `apps/*`, `examples/*`, and `benchmarks/*` set no
-  custom condition and keep consuming the built `dist/`. Every runner in the repo resolves `#` through that field —
-  `tsc`, Vite, Vitest, and `tsx` (the benchmarks) — so `paths` exists nowhere.
+  condition also makes cross-package imports (`@codefast/ui` → `@codefast/tv`) resolve to the other package's `src`, so
+  `check-types` no longer needs a prior build; `apps/*`, `examples/*`, and `benchmarks/*` set no custom condition and
+  keep consuming the built `dist/`. Every runner in the repo resolves `#` through that field — `tsc`, Vite, Vitest, and
+  `tsx` (the benchmarks) — so `paths` exists nowhere.
 - **The three conditions are three audiences, not three spellings of one path.** `tsc` emits `#` specifiers verbatim
   into both `.d.ts` and `.js`, so the field keeps resolving after the package leaves this repo: `source` → `./src/*` is
   you during dev; `types` → `./dist/*.d.ts` is a **consumer's** `tsc` resolving a `#` it found inside your shipped
@@ -324,7 +324,7 @@ point of use beats brevity, and every word must convey information:
 | Path                         | Role                                                                                                                                   |
 | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | `packages/ui`                | `@codefast/ui` — Radix + Tailwind component library; per-component subpath exports (`./button`, etc.)                                  |
-| `packages/tailwind-variants` | Type-safe variant styling API (faster `tailwind-variants` replacement); used by `ui`                                                   |
+| `packages/tv`                | Type-safe variant styling API (faster `tailwind-variants` replacement); used by `ui`                                                   |
 | `packages/theme`             | Theme management using React 19 features (optimistic updates, cross-tab sync)                                                          |
 | `packages/di`                | Type-safe, zero-dependency dependency-injection primitives                                                                             |
 | `packages/di-testing`        | Solitary and sociable auto-mocking test beds for `@codefast/di` (`TestBed.solitary`/`.sociable`)                                       |

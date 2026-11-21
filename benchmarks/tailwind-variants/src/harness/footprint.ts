@@ -15,8 +15,8 @@ const packageRootDirectory = join(dirname(fileURLToPath(import.meta.url)), "..",
  * entry, so a library that merges by default ships its engine.
  */
 const PROGRAMS: Readonly<Record<string, string>> = {
-  "@codefast/tailwind-variants": `
-    import { tv } from "@codefast/tailwind-variants";
+  "@codefast/tv": `
+    import { tv } from "@codefast/tv";
     const button = tv({ base: "rounded px-4", variants: { size: { sm: "text-sm", lg: "text-lg" } } });
     console.log(button({ size: "sm" }));`,
   "tailwind-variants": `
@@ -29,7 +29,7 @@ const PROGRAMS: Readonly<Record<string, string>> = {
     console.log(button({ size: "sm" }));`,
 };
 
-/** The engine `@codefast/tailwind-variants` merges with by default, bundled alone so its share reads off one line. */
+/** The engine `@codefast/tv` merges with by default, bundled alone so its share reads off one line. */
 const ENGINE_PROGRAM = `
   import { twMerge } from "cn";
   console.log(twMerge("px-2 px-4"));`;

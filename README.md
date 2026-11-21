@@ -47,14 +47,11 @@ source under `/ui`, and each package's own README, specification, and architectu
 | [`@codefast/di`](packages/di)                               | Type-safe, zero-dependency dependency injection on standard decorators — the flagship           |
 | [`@codefast/di-testing`](packages/di-testing)               | Solitary and sociable auto-mocking test beds for `@codefast/di`                                 |
 | [`@codefast/ui`](packages/ui)                               | 70+ accessible React components built on Radix UI primitives and Tailwind CSS 4                 |
-| [`@codefast/tailwind-variants`](packages/tailwind-variants) | Type-safe variant styling API — a faster drop-in replacement for `tailwind-variants`            |
+| [`@codefast/tv`](packages/tv)                               | Type-safe variant styling API — a faster drop-in replacement for `tailwind-variants`            |
 | [`@codefast/theme`](packages/theme)                         | Appearance management for React 19 — optimistic updates, cross-tab sync, FOUC-free SSR          |
 | [`@codefast/tracking`](packages/tracking)                   | Consent-gated, type-safe event tracking for TanStack Start over a Standard Schema event catalog |
 | [`@codefast/cli`](packages/cli)                             | Developer CLI for the monorepo (`audit`, `exports:generate`, `publish:prepare`, `since:stamp`)  |
 | [`@codefast/typescript-config`](packages/typescript-config) | Shared TypeScript configuration presets                                                         |
-
-`@codefast/tailwind-variants` will be renamed `@codefast/tv` in a future release; its
-[README](packages/tailwind-variants/README.md) says what to change.
 
 ## Quick start
 

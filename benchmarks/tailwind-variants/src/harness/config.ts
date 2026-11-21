@@ -20,7 +20,7 @@ const TSCONFIG_FILE_NAME = "tsconfig.json";
  * @since 0.3.16-canary.0
  */
 export const CODEFAST_TV = {
-  libraryName: "@codefast/tailwind-variants",
+  libraryName: "@codefast/tv",
   scenarioName: "codefast",
   tsconfigFileName: TSCONFIG_FILE_NAME,
   benchEntryFileName: "codefast-benches.ts",

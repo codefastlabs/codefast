@@ -1,5 +1,5 @@
-import type { VariantProps } from "@codefast/tailwind-variants";
-import { cn, tv } from "@codefast/tailwind-variants";
+import type { VariantProps } from "@codefast/tv";
+import { cn, tv } from "@codefast/tv";
 
 export { cn, tv };
 export type { VariantProps };

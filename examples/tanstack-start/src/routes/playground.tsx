@@ -17,7 +17,7 @@ export const Route = createFileRoute("/playground")({
 const PACKAGES = [
   "@codefast/ui",
   "@codefast/theme",
-  "@codefast/tailwind-variants",
+  "@codefast/tv",
   "@codefast/di",
   "@codefast/tracking",
   "@codefast/cli",

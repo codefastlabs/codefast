@@ -262,9 +262,9 @@ A/B. The method is in
 [`benchmarks/di/BENCH_GUIDE.md`](../../benchmarks/di/BENCH_GUIDE.md#comparing-two-builds-paired-alternating-best-of),
 and this suite runs it the same way:
 
-- **`bench:ab` first.** It materialises `packages/tailwind-variants/src` for each side — a git ref, or the working tree
-  for the new one — measures the rows named, alternates which side goes first, and prints the ratio and each side's
-  spread, restoring the working tree on any exit:
+- **`bench:ab` first.** It materialises `packages/tv/src` for each side — a git ref, or the working tree for the new one
+  — measures the rows named, alternates which side goes first, and prints the ratio and each side's spread, restoring
+  the working tree on any exit:
 
   ```bash
   pnpm --filter @benchmark/tailwind-variants bench:ab -- slots-without-merge,repeat-slots-with-merge --base main
@@ -272,12 +272,11 @@ and this suite runs it the same way:
 
   `--base` defaults to `HEAD~1` and the new side to the working tree.
 
-- **Swap the source by hand** only for a comparison the driver does not cover: check out or stash
-  `packages/tailwind-variants/src` per side, then run `BENCH_ONLY=<id> pnpm bench`. That runner rebuilds the package
-  before sampling, which is exactly what makes the swap take effect.
+- **Swap the source by hand** only for a comparison the driver does not cover: check out or stash `packages/tv/src` per
+  side, then run `BENCH_ONLY=<id> pnpm bench`. That runner rebuilds the package before sampling, which is exactly what
+  makes the swap take effect.
 - **Swap the build** only when a side cannot be checked out — a published version, a `dist` archived outside the tree.
-  Copy each prebuilt `dist` over `packages/tailwind-variants/dist` and drive the child entry directly, one scenario at a
-  time:
+  Copy each prebuilt `dist` over `packages/tv/dist` and drive the child entry directly, one scenario at a time:
 
   ```bash
   BENCH_ONLY=slots-without-merge node --import tsx/esm src/codefast-benches.ts
