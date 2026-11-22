@@ -1,0 +1,67 @@
+name: Dependabot dedupe
+
+# Dependabot rewrites pnpm-lock.yaml without `pnpm dedupe`, so a bump can leave a duplicate that Verify rejects.
+# This commits the deduped lockfile to the bump's branch, then dispatches CI on it: a GITHUB_TOKEN push fires no
+# workflow, and a workflow_dispatch is the one event that token may start, under the same required check names.
+# pull_request_target hands this job a write token; it checks out only a Dependabot branch of this repository and
+# runs pnpm with scripts disabled.
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+
+concurrency:
+  group: dependabot-dedupe-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  dedupe:
+    name: Dedupe Lockfile
+    if: >-
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      startsWith(github.event.pull_request.head.ref, 'dependabot/npm_and_yarn/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+    env:
+      HEAD_REF: ${{ github.event.pull_request.head.ref }}
+    steps:
+      - name: Checkout Dependabot Branch
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Configure Build Environment
+        uses: ./.github/actions/setup-environment
+        with:
+          install-dependencies: false
+          enable-remote-cache: false
+
+      - name: Dedupe Lockfile
+        id: dedupe
+        run: |
+          pnpm dedupe --ignore-scripts
+          if git diff --quiet -- pnpm-lock.yaml; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Pushes onto the exact head this run checked out, so a newer Dependabot rebase is never overwritten.
+      - name: Commit Deduped Lockfile
+        if: steps.dedupe.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(deps): dedupe pnpm-lock.yaml" -- pnpm-lock.yaml
+          git push origin "HEAD:refs/heads/$HEAD_REF"
+
+      - name: Dispatch CI on Deduped Branch
+        if: steps.dedupe.outputs.changed == 'true'
+        run: gh workflow run ci.yml --ref "$HEAD_REF"
+        env:
+          GH_TOKEN: ${{ github.token }}
