@@ -306,8 +306,8 @@ catalogs:
       specifier: ^4.4.0
       version: 4.4.0
     date-fns-jalali:
-      specifier: 4.4.0-0
-      version: 4.4.0-0
+      specifier: 4.4.0-1
+      version: 4.4.0-1
     ditox:
       specifier: ^3.3.1
       version: 3.3.1
@@ -561,7 +561,7 @@ importers:
         version: 2.10.3
       date-fns-jalali:
         specifier: 'catalog:'
-        version: 4.4.0-0
+        version: 4.4.0-1
       embla-carousel-autoplay:
         specifier: 'catalog:'
         version: 8.6.0(embla-carousel@8.6.0)
@@ -5033,8 +5033,8 @@ packages:
   dataloader@2.2.3:
     resolution: {integrity: sha512-y2krtASINtPFS1rSDjacrFgn1dcUuoREVabwlOGOe4SdxenREqwjwjElAdwvbGM7kgZz9a3KVicWR7vcz8rnzA==}
 
-  date-fns-jalali@4.4.0-0:
-    resolution: {integrity: sha512-4kei2k9Hr/fFvxNL7C6k+WeEYVehe5jO8zDcpREDDZ4ILa9af8tNmqNUJKAGJyPqKAHsdMmwY0jX5gTCiRWw4A==}
+  date-fns-jalali@4.4.0-1:
+    resolution: {integrity: sha512-OInJNaXOOiclCDMge5NZp42/Bn1nx9FHeLeoMB+7ejrZJWm3XixWg6+PZOyLaPLD4ODCzhpeO/Dj34nAW2Su+g==}
 
   date-fns@4.4.0:
     resolution: {integrity: sha512-+1UMbeh68lH1SegH83CGWwpb6OHHbpSgr3+s5Eww5M4CAgswBpoWS0AjTOfEJ33HiYKz1hdj/KTFprzXHmq/6w==}
@@ -10041,7 +10041,7 @@ snapshots:
 
   dataloader@2.2.3: {}
 
-  date-fns-jalali@4.4.0-0: {}
+  date-fns-jalali@4.4.0-1: {}
 
   date-fns@4.4.0: {}
 
