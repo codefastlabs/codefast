@@ -86,7 +86,7 @@ catalog:
   jest-axe: ^11.0.0
   jiti: ^2.7.0
   jsdom: ^31.0.1
-  knip: ^6.45.1
+  knip: ^6.46.1
   lint-staged: ^17.6.1
   marked: ^18.2.1
   lucide-react: ^1.76.0
