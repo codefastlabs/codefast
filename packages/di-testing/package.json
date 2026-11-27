@@ -152,7 +152,7 @@
     "vitest": "catalog:"
   },
   "peerDependencies": {
-    "@codefast/di": ">=0.15.0"
+    "@codefast/di": ">=0.16.0"
   },
   "engines": {
     "node": ">=24.15.0"

@@ -4,6 +4,8 @@ import type { ConsentConfig } from "#core/consent-config";
 
 /**
  * Options for `createEffectiveConsentReader`.
+ *
+ * @since 0.11.0
  */
 export interface EffectiveConsentReaderOptions {
   /** Must be the same object `useConsent` receives — one config, every surface. */
@@ -22,6 +24,8 @@ export interface EffectiveConsentReaderOptions {
 /**
  * Creates a non-React reader of `useConsent`'s `effectiveConsent` — pass it as
  * `createClientTracker({ getConsent })` so the pipeline and the banner share one rule.
+ *
+ * @since 0.11.0
  */
 export function createEffectiveConsentReader(options: EffectiveConsentReaderOptions): () => ConsentDecision {
   const { config, getMode, storage } = options;
