@@ -39,14 +39,14 @@ describe("createConsentRuntime", () => {
     });
 
     // Unresolved → strictest opt-in default → all denied.
-    expect(runtime.isAnalyticsAllowed()).toBe(false);
+    expect(runtime.getEffectiveConsent().analytics).toBe(false);
 
     runtime.ensureInitialConsentResolved();
     await flushMicrotasks();
 
     // Resolved to a US opt-out default → the requested analytics category is granted.
     expect(resolveInitialConsent).toHaveBeenCalledOnce();
-    expect(runtime.isAnalyticsAllowed()).toBe(true);
+    expect(runtime.getEffectiveConsent().analytics).toBe(true);
   });
 
   it("lets a stored denial win over the resolved opt-out default", async () => {
@@ -59,6 +59,6 @@ describe("createConsentRuntime", () => {
     await flushMicrotasks();
     runtime.storage.save({ decision: { ads: false, analytics: false }, policyVersion: "1", timestamp: 0 });
 
-    expect(runtime.isAnalyticsAllowed()).toBe(false);
+    expect(runtime.getEffectiveConsent().analytics).toBe(false);
   });
 });

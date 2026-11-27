@@ -100,6 +100,11 @@
       "types": "./dist/client/create-client-tracker.d.ts",
       "import": "./dist/client/create-client-tracker.js"
     },
+    "./client/effective-consent-reader": {
+      "source": "./src/client/effective-consent-reader.ts",
+      "types": "./dist/client/effective-consent-reader.d.ts",
+      "import": "./dist/client/effective-consent-reader.js"
+    },
     "./client/gpc": {
       "source": "./src/client/gpc.ts",
       "types": "./dist/client/gpc.d.ts",
@@ -109,11 +114,6 @@
       "source": "./src/client/initial-consent-store.ts",
       "types": "./dist/client/initial-consent-store.d.ts",
       "import": "./dist/client/initial-consent-store.js"
-    },
-    "./client/is-analytics-allowed": {
-      "source": "./src/client/is-analytics-allowed.ts",
-      "types": "./dist/client/is-analytics-allowed.d.ts",
-      "import": "./dist/client/is-analytics-allowed.js"
     },
     "./client/server-persisted-anonymous-id": {
       "source": "./src/client/server-persisted-anonymous-id.ts",

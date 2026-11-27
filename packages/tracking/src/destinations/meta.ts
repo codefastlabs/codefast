@@ -54,6 +54,12 @@ export interface MetaDestinationOptions {
   clearCookies?: (() => void) | undefined;
   /** Read per event so an `ads` change restricts data use without recreating the destination. */
   getDecision: () => ConsentDecision;
+  /**
+   * Whether delivering under Limited Data Use substitutes for an `ads` grant right now — wire
+   * it to the resolved mode being `"opt-out"`. Read per event. Omit to withhold the
+   * destination whenever `ads` is denied, the only lawful default under opt-in.
+   */
+  isLimitedDataUseAllowed?: (() => boolean) | undefined;
   name?: string | undefined;
   /**
    * Delivers one mapped event — the transport seam. Wire it to `fbq(...)` (Pixel) or a
@@ -78,6 +84,9 @@ export function createMetaDestination(options: MetaDestinationOptions): Destinat
 
   return {
     consentRequirement: "required",
+    isPermittedBy: (consent) =>
+      toAdConsentState(consent, { isLimitedDataUseAllowed: options.isLimitedDataUseAllowed?.() === true })
+        .transmissionAllowed,
     name: options.name ?? "meta",
     onErasure() {
       stopped = true;

@@ -83,6 +83,9 @@ export { createCookieAnonymousId } from "#client/cookie-anonymous-id";
 export type { ClientTracker, ClientTrackerOptions, DeliveryErrorContext } from "#client/create-client-tracker";
 export { createClientTracker } from "#client/create-client-tracker";
 
+export type { EffectiveConsentReaderOptions } from "#client/effective-consent-reader";
+export { createEffectiveConsentReader } from "#client/effective-consent-reader";
+
 export { hasGlobalPrivacyControlSignal } from "#client/gpc";
 
 export type {
@@ -91,9 +94,6 @@ export type {
   InitialConsentStoreOptions,
 } from "#client/initial-consent-store";
 export { createInitialConsentStore } from "#client/initial-consent-store";
-
-export type { IsAnalyticsAllowedOptions } from "#client/is-analytics-allowed";
-export { createIsAnalyticsAllowed } from "#client/is-analytics-allowed";
 
 export type { ServerPersistedAnonymousIdOptions } from "#client/server-persisted-anonymous-id";
 export { createServerPersistedAnonymousId } from "#client/server-persisted-anonymous-id";
@@ -138,7 +138,7 @@ export { useGoogleConsentSync } from "#react/use-google-consent-sync";
 export { useInitialConsent } from "#react/use-initial-consent";
 
 // ── Destinations (client-lane; Vercel stays on its own subpath) ──────────────────────────────────────────────────────
-export type { AdConsentState } from "#destinations/ad-consent";
+export type { AdConsentState, AdConsentStateOptions } from "#destinations/ad-consent";
 export { toAdConsentState } from "#destinations/ad-consent";
 
 export type {

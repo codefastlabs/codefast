@@ -12,7 +12,7 @@ import {
   clearAnonymousIdCookie,
   persistAnonymousIdCookie,
 } from "#features/tracking/lib/anonymous-id";
-import { isAnalyticsAllowed, isExemptionAllowed } from "#features/tracking/lib/visitor-consent";
+import { getEffectiveConsent, isAnalyticsAllowed, isExemptionAllowed } from "#features/tracking/lib/visitor-consent";
 
 /**
  * Custom events carry identifiers and metadata only — never free-form search text,
@@ -127,7 +127,7 @@ export function getTracker(): ClientTracker<typeof catalog> {
       createVercelAnalyticsDestination({ consentRequirement: "exempt" }),
       createGoogleAnalyticsDestination(),
     ],
-    isAnalyticsAllowed,
+    getConsent: getEffectiveConsent,
     // Vercel's exempt lane counts only where audience-measurement exemption is defensible —
     // gated in the strict opt-in regions (spec-destinations §2).
     isExemptionAllowed,

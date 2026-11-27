@@ -1,3 +1,4 @@
+import type { ConsentDecision } from "#core/consent";
 import type { TrackedEvent } from "#core/tracked-event";
 
 /**
@@ -9,13 +10,20 @@ import type { TrackedEvent } from "#core/tracked-event";
  */
 export interface Destination {
   /**
-   * "exempt" keeps this destination receiving events while the tracker's analytics gate
-   * is closed — only for cookieless, identifier-free sinks: gated envelopes carry no
-   * `anonymousId`, and nothing is persisted.
+   * "exempt" keeps this destination receiving events while its own consent is not met —
+   * only for cookieless, identifier-free sinks: gated envelopes carry no `anonymousId`, and
+   * nothing is persisted.
    *
    * @defaultValue "required"
    */
   consentRequirement?: "exempt" | "required" | undefined;
+  /**
+   * Whether the visitor's effective consent permits this destination to receive identified
+   * events — evaluated per event, so each destination is gated on its own purpose.
+   *
+   * @defaultValue requires `analytics`
+   */
+  isPermittedBy?: ((consent: ConsentDecision) => boolean) | undefined;
   name: string;
   /**
    * Erase this destination's trace of the subject on withdrawal (spec-data-subject-rights

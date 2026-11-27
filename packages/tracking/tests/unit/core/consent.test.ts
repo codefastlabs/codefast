@@ -154,61 +154,68 @@ describe("readStoredDecision", () => {
 
 describe("resolveEffectiveConsent", () => {
   it("falls back to the region default when nothing is stored", () => {
-    const storage = createMemoryConsentStorage();
-
     expect(
       resolveEffectiveConsent({
         hasGlobalPrivacyControlSignal: false,
         mode: "opt-in",
-        policyVersion: "1",
         requestedCategories: ["analytics"],
-        storage,
+        storedDecision: undefined,
       }),
     ).toEqual({ ads: false, analytics: false });
     expect(
       resolveEffectiveConsent({
         hasGlobalPrivacyControlSignal: false,
         mode: "opt-out",
-        policyVersion: "1",
         requestedCategories: ["analytics"],
-        storage,
+        storedDecision: undefined,
       }),
     ).toEqual({ ads: false, analytics: true });
   });
 
   it("prefers the stored decision over the region default", () => {
-    const storage = createMemoryConsentStorage({
-      decision: { ads: false, analytics: false },
-      policyVersion: "1",
-      timestamp: 0,
-    });
+    expect(
+      resolveEffectiveConsent({
+        hasGlobalPrivacyControlSignal: false,
+        mode: "opt-out",
+        requestedCategories: ["analytics"],
+        storedDecision: { ads: false, analytics: false },
+      }),
+    ).toEqual({ ads: false, analytics: false });
+  });
+
+  it.each([
+    ["opt-out", { ads: true, analytics: true }, false, { ads: true, analytics: true }],
+    ["opt-out", { ads: true, analytics: true }, true, { ads: false, analytics: true }],
+    ["opt-in", { ads: true, analytics: true }, true, { ads: false, analytics: true }],
+    ["opt-out", { ads: false, analytics: true }, true, { ads: false, analytics: true }],
+    ["opt-in", { ads: false, analytics: false }, false, { ads: false, analytics: false }],
+    ["opt-in", { ads: true, analytics: false }, true, { ads: false, analytics: false }],
+    ["opt-out", undefined, true, { ads: false, analytics: true }],
+    ["opt-in", undefined, true, { ads: false, analytics: false }],
+  ] as const)(
+    "under %s tightens stored %o with GPC %s to %o",
+    (mode, storedDecision, hasGlobalPrivacyControlSignal, expected) => {
+      expect(
+        resolveEffectiveConsent({
+          hasGlobalPrivacyControlSignal,
+          mode,
+          requestedCategories: ["ads", "analytics"],
+          storedDecision,
+        }),
+      ).toEqual(expected);
+    },
+  );
+
+  it("returns an untouched stored decision as-is so a cached snapshot keeps its identity", () => {
+    const storedDecision = { ads: true, analytics: true };
 
     expect(
       resolveEffectiveConsent({
         hasGlobalPrivacyControlSignal: false,
         mode: "opt-out",
-        policyVersion: "1",
         requestedCategories: ["analytics"],
-        storage,
+        storedDecision,
       }),
-    ).toEqual({ ads: false, analytics: false });
-  });
-
-  it("re-applies the region default when the stored decision's policy version is superseded", () => {
-    const storage = createMemoryConsentStorage({
-      decision: { ads: false, analytics: true },
-      policyVersion: "0",
-      timestamp: 0,
-    });
-
-    expect(
-      resolveEffectiveConsent({
-        hasGlobalPrivacyControlSignal: false,
-        mode: "opt-in",
-        policyVersion: "1",
-        requestedCategories: ["analytics"],
-        storage,
-      }),
-    ).toEqual({ ads: false, analytics: false });
+    ).toBe(storedDecision);
   });
 });

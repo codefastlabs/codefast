@@ -230,6 +230,33 @@ describe("buildGtagConsentBootstrapScript", () => {
     expect(gtagScriptElement()?.src).toBe("https://www.googletagmanager.com/gtag/js?id=G-TEST123");
   });
 
+  it("lets a live GPC signal deny ads over a stored grant", () => {
+    window.localStorage.setItem(
+      "k",
+      JSON.stringify({ decision: { ads: true, analytics: true }, policyVersion: "1", timestamp: 0 }),
+    );
+    Object.defineProperty(navigator, "globalPrivacyControl", { configurable: true, value: true });
+
+    try {
+      runScript(
+        buildGtagConsentBootstrapScript({
+          config: BOOTSTRAP_CONFIG,
+          defaultConsent: { ads: false, analytics: false },
+          gaMeasurementId: "G-TEST123",
+        }),
+      );
+    } finally {
+      Reflect.deleteProperty(navigator, "globalPrivacyControl");
+    }
+
+    expect(consentDefaultParams()).toEqual({
+      ad_personalization: "denied",
+      ad_storage: "denied",
+      ad_user_data: "denied",
+      analytics_storage: "granted",
+    });
+  });
+
   it("prefers a stored decision over defaultConsent", () => {
     window.localStorage.setItem(
       "k",

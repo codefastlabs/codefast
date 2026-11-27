@@ -7,8 +7,8 @@ import { flattenEventProps } from "#destinations/shared";
 /**
  * TikTok consent. TikTok uses a **single Limited Data Use boolean**, not Meta's
  * `dataProcessingOptions` structure and no signal object (spec-destinations §5). Its
- * transmission gate (`ttq.grantConsent()`/`revokeConsent()`) follows `analytics` and is the
- * tracker's job; this models the `ads`-driven LDU lever.
+ * transmission gate (`ttq.grantConsent()`/`revokeConsent()`) is the tracker's job, through the
+ * destination's `isPermittedBy`; this models the `ads`-driven LDU lever.
  *
  * @since 0.5.0-canary.6
  */
@@ -46,6 +46,12 @@ export interface TiktokDestinationOptions {
   clearCookies?: (() => void) | undefined;
   /** Read per event so an `ads` change flips LDU without recreating the destination. */
   getDecision: () => ConsentDecision;
+  /**
+   * Whether delivering under Limited Data Use substitutes for an `ads` grant right now — wire
+   * it to the resolved mode being `"opt-out"`. Read per event. Omit to withhold the
+   * destination whenever `ads` is denied, the only lawful default under opt-in.
+   */
+  isLimitedDataUseAllowed?: (() => boolean) | undefined;
   name?: string | undefined;
   /**
    * Delivers one mapped event — the transport seam. Wire it to `ttq.track(...)` (Pixel) or the
@@ -67,6 +73,9 @@ export function createTiktokDestination(options: TiktokDestinationOptions): Dest
 
   return {
     consentRequirement: "required",
+    isPermittedBy: (consent) =>
+      toAdConsentState(consent, { isLimitedDataUseAllowed: options.isLimitedDataUseAllowed?.() === true })
+        .transmissionAllowed,
     name: options.name ?? "tiktok",
     onErasure() {
       stopped = true;

@@ -1,5 +1,6 @@
 import type { StandardSchemaV1 } from "@standard-schema/spec";
 
+import type { ConsentDecision } from "#core/consent";
 import type { Destination } from "#core/destination";
 import type { EventCatalog } from "#core/event-catalog";
 import { assertValidEventProperties } from "#core/event-catalog";
@@ -50,6 +51,11 @@ function sendToDestination(
   }
 }
 
+/** A destination without its own rule is a measurement sink, so it follows `analytics`. */
+function isPermitted(destination: Destination, consent: ConsentDecision): boolean {
+  return destination.isPermittedBy ? destination.isPermittedBy(consent) : consent.analytics;
+}
+
 /** Invokes a destination's erasure once, swallowing both failure shapes — DSR must never break the flow. */
 function eraseInDestination(destination: Destination, id: string): void {
   try {
@@ -72,13 +78,14 @@ export interface ClientTrackerOptions<Catalog extends EventCatalog> {
   catalog: Catalog;
   destinations: Array<Destination>;
   /**
-   * Consulted before every event — while it returns `false`, only
-   * `consentRequirement: "exempt"` destinations still receive events, stripped of
-   * identifiers. Omit to always track.
+   * The visitor's effective consent, read once per event and checked against each
+   * destination's {@link Destination.isPermittedBy} — a destination it does not permit
+   * receives nothing, unless it is `consentRequirement: "exempt"`, which then receives the
+   * event stripped of identifiers. Omit to always track.
    */
-  isAnalyticsAllowed?: (() => boolean) | undefined;
+  getConsent?: (() => ConsentDecision) | undefined;
   /**
-   * Consulted before an `exempt` destination receives an event while the gate is closed.
+   * Consulted before an `exempt` destination receives an event its consent does not permit.
    * ePrivacy audience-measurement exemption is jurisdiction-dependent (spec-destinations
    * §2), so it MUST be gateable per region rather than assumed global — return `false`
    * where exemption is not defensible and even exempt sinks are withheld. Omit to treat
@@ -119,9 +126,6 @@ export interface ClientTracker<Catalog extends EventCatalog> {
 export function createClientTracker<Catalog extends EventCatalog>(
   options: ClientTrackerOptions<Catalog>,
 ): ClientTracker<Catalog> {
-  // The exempt lane only carries what a cookieless sink may see — identifier-free counts.
-  const exemptDestinations = options.destinations.filter((destination) => destination.consentRequirement === "exempt");
-
   return {
     erase(id) {
       for (const destination of options.destinations) {
@@ -141,24 +145,26 @@ export function createClientTracker<Catalog extends EventCatalog>(
       const validatedProperties = assertValidEventProperties(definition.schema, name, properties);
 
       // The gate runs per event (not at creation) so a consent change mid-session applies immediately.
-      const isAllowed = options.isAnalyticsAllowed?.() !== false;
+      const consent = options.getConsent?.();
+      const permittedDestinations =
+        consent === undefined
+          ? options.destinations
+          : options.destinations.filter((destination) => isPermitted(destination, consent));
+      const unpermittedExemptDestinations = options.destinations.filter(
+        (destination) => destination.consentRequirement === "exempt" && !permittedDestinations.includes(destination),
+      );
+      // Exempt sinks still receive identifier-free events — but only where exemption is
+      // defensible (spec-destinations §2); a `false` here withholds them too.
+      const exemptDestinations =
+        unpermittedExemptDestinations.length > 0 && options.isExemptionAllowed?.() !== false
+          ? unpermittedExemptDestinations
+          : [];
 
-      // While gated, exempt sinks still receive identifier-free events — but only where
-      // exemption is defensible (spec-destinations §2); a `false` here withholds them too.
-      const activeDestinations = isAllowed
-        ? options.destinations
-        : options.isExemptionAllowed?.() === false
-          ? []
-          : exemptDestinations;
-
-      if (activeDestinations.length === 0) {
+      if (permittedDestinations.length === 0 && exemptDestinations.length === 0) {
         return;
       }
 
-      const event: TrackedEvent = {
-        // Gated events ship identifier-free: no anonymousId is resolved, so none is ever
-        // minted as a side effect.
-        anonymousId: isAllowed ? options.anonymousId() : "",
+      const envelope: Omit<TrackedEvent, "anonymousId"> = {
         eventId: generateEventId(),
         name,
         properties: validatedProperties as Record<string, unknown>,
@@ -166,8 +172,19 @@ export function createClientTracker<Catalog extends EventCatalog>(
         type: "track",
       };
 
-      for (const destination of activeDestinations) {
-        sendToDestination(destination, event, options.onDeliveryError);
+      if (permittedDestinations.length > 0) {
+        // Resolved only once some destination may receive it, so no id is ever minted for a gated event.
+        const event: TrackedEvent = { ...envelope, anonymousId: options.anonymousId() };
+
+        for (const destination of permittedDestinations) {
+          sendToDestination(destination, event, options.onDeliveryError);
+        }
+      }
+
+      const strippedEvent: TrackedEvent = { ...envelope, anonymousId: "" };
+
+      for (const destination of exemptDestinations) {
+        sendToDestination(destination, strippedEvent, options.onDeliveryError);
       }
     },
   };

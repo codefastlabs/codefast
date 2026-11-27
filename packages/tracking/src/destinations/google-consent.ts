@@ -64,6 +64,11 @@ function consentDecisionShapeCheckExpression(): string {
   );
 }
 
+/** JS object-literal fragment copying `consent` with `ads` denied — GPC's tightening, mirroring `resolveEffectiveConsent`. */
+function consentWithAdsDeniedExpression(): string {
+  return `{ ${CONSENT_CATEGORIES.map((category) => `${category}: ${category === "ads" ? "false" : `consent.${category}`}`).join(", ")} }`;
+}
+
 /**
  * JS object-literal fragment for `gtag("consent", "default", { … })` — generated from
  * {@link GOOGLE_CONSENT_SIGNAL_CATEGORIES} so runtime and bootstrap stay aligned.
@@ -94,8 +99,8 @@ export interface GoogleConsentBootstrapPreambleOptions {
 
 /**
  * Shared head of the gtag and GTM consent bootstraps: dataLayer init, `gtag()` stub,
- * stored-decision read (policy-version + shape checked), and the Consent Mode v2
- * "default" signal. The builders append only their tag-specific tail, so the consent
+ * stored-decision read (policy-version + shape checked), the GPC tightening, and the
+ * Consent Mode v2 "default" signal. The builders append only their tag-specific tail, so the consent
  * logic cannot drift between them.
  *
  * @since 0.5.0-canary.6
@@ -114,6 +119,9 @@ export function buildGoogleConsentBootstrapPreamble(options: GoogleConsentBootst
       }
     } catch (e) {}
     var consent = storedConsent || (${JSON.stringify(options.defaultConsent)});
+    if (consent.ads && window.navigator && window.navigator.globalPrivacyControl === true) {
+      consent = ${consentWithAdsDeniedExpression()};
+    }
     gtag("consent", "default", {
       ${consentSignalAssignmentsExpression()}
     });`;
