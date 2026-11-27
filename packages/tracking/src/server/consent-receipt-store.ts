@@ -3,7 +3,7 @@ import type { ConsentReceipt } from "#core/consent-receipt";
 /**
  * Persistence backend for consent receipts — the durable store is the consumer's to supply
  * (a database, an append-only log). The store is **append-only**: `append` never overwrites,
- * and an update/withdrawal is a new receipt referencing the prior one (spec-consent-receipts §3).
+ * and an update/withdrawal is a new receipt referencing the prior one.
  * May be async so a real backend can await its write.
  *
  * @since 0.5.0-canary.6

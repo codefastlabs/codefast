@@ -1,7 +1,7 @@
 import type { ConsentCategory, ConsentDecision } from "#core/consent";
 
 /**
- * TCF/GPP interop reconciler (spec-ad-consent-frameworks): the system **reads** an external
+ * TCF/GPP interop reconciler: the system **reads** an external
  * CMP and reconciles it with the native `{ ads, analytics }` decision — it never becomes a
  * CMP, mints TC/GPP strings, or hard-codes TCF purpose ids or the Google vendor id (that
  * mapping is ad-ops policy, so the caller derives `CmpConsentSignal` and passes it in).
@@ -43,7 +43,7 @@ export interface ReconcileAdFrameworkConsentOptions {
 }
 
 /**
- * Reconciles native consent with a CMP source of truth per spec-ad-consent-frameworks §3:
+ * Reconciles native consent with a CMP source of truth under CMP precedence:
  * a governing CMP overrides its categories (fail-closed to denied while loading); a missing
  * or out-of-scope CMP leaves native standing; GPC always tightens `ads` last.
  *
@@ -70,7 +70,7 @@ export function reconcileAdFrameworkConsent(options: ReconcileAdFrameworkConsent
 }
 
 /**
- * Detects a TCF CMP without reading it — `typeof __tcfapi === "function"` (spec §3).
+ * Detects a TCF CMP without reading it — `typeof __tcfapi === "function"`.
  *
  * @since 0.5.0-canary.6
  */
@@ -79,7 +79,7 @@ export function hasTcfApi(scope: { __tcfapi?: unknown } = globalThis as { __tcfa
 }
 
 /**
- * Detects a GPP CMP without reading it — `typeof __gpp === "function"` (spec §3).
+ * Detects a GPP CMP without reading it — `typeof __gpp === "function"`.
  *
  * @since 0.5.0-canary.6
  */

@@ -49,7 +49,7 @@ export interface ConsentReceiptInput {
 /**
  * A stored consent receipt: the caller input plus server-derived fields. This is the
  * legally-authoritative record of proof — the client `ConsentRecord` is only a runtime
- * cache (spec-consent-receipts §5).
+ * cache.
  *
  * @remarks
  * The record is append-only; never mutate a stored receipt. `ipCoarse` is truncated at

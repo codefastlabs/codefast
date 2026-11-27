@@ -13,7 +13,7 @@ import type { ConsentConfig } from "#core/consent-config";
  */
 export interface ConsentRuntimeOptions {
   config: ConsentConfig;
-  /** Re-read per event so a GPC change applies without recreating the runtime. Defaults to the real navigator signal. */
+  /** Re-read per event, so a GPC change applies without recreating the runtime. Defaults to the navigator's. */
   hasGlobalPrivacyControlSignal?: (() => boolean) | undefined;
   /**
    * `sessionStorage` key caching the resolved region default, so only the first page
@@ -45,7 +45,7 @@ export interface ConsentRuntime {
   ensureInitialConsentResolved: () => void;
   /** Feed to `useInitialConsent` for the reactive region default. */
   initialConsentStore: InitialConsentStore;
-  /** The visitor's effective consent right now — the same rule `useConsent` applies; feed it to `createClientTracker({ getConsent })`. */
+  /** The visitor's effective consent now, by the rule `useConsent` applies — the tracker's `getConsent`. */
   getEffectiveConsent: () => ConsentDecision;
   /** The one `ConsentStorage` instance every surface must share. */
   storage: ConsentStorage;

@@ -64,7 +64,7 @@ function consentDecisionShapeCheckExpression(): string {
   );
 }
 
-/** JS object-literal fragment copying `consent` with `ads` denied — GPC's tightening, mirroring `resolveEffectiveConsent`. */
+/** JS object-literal fragment copying `consent` with `ads` denied — the GPC step of `resolveEffectiveConsent`. */
 function consentWithAdsDeniedExpression(): string {
   return `{ ${CONSENT_CATEGORIES.map((category) => `${category}: ${category === "ads" ? "false" : `consent.${category}`}`).join(", ")} }`;
 }
