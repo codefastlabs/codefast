@@ -8,16 +8,21 @@ A destination is the tracker's only dependency for delivery — never a specific
 
 - `name` — a stable identifier for logs/warnings.
 - `consentRequirement` — `"required"` (default) or `"exempt"` (§2).
-- `send(envelope)` — accepts a `TrackEvent` (spec-event-model §3) and returns a deferred/awaitable result. Destinations
-  own their transport: queueing, batching, and unload delivery are the destination's (or its underlying tag's) job — the
-  tracker adds no queue in front.
+- `isPermittedBy(decision)` — whether the visitor's effective consent (spec-consent §7) permits this destination to
+  receive identified envelopes. Optional; the default is `analytics` granted, the right purpose for a measurement sink.
+  An advertising destination MUST declare its own (§5): it is gated on `ads`, never on `analytics` alone.
+- `send(envelope, decision)` — accepts a `TrackEvent` (spec-event-model §3) and the effective decision the gate admitted
+  it under (absent when the tracker has no gate), and returns a deferred/awaitable result. A destination that restricts
+  what it sends by consent MUST derive the restriction from that decision, never from a second read of its own, so the
+  gate and the restriction can never disagree. Destinations own their transport: queueing, batching, and unload delivery
+  are the destination's (or its underlying tag's) job — the tracker adds no queue in front.
 
 `send` SHOULD never throw synchronously; the tracker contains both failure shapes regardless (spec-tracker §4).
 
 ## 2. Exemption rules
 
 `consentRequirement: "exempt"` asserts the sink is cookieless and identifier-free: it may then receive
-identifier-stripped envelopes while the consent gate is closed (spec-tracker §3). The default MUST be `"required"` so
+identifier-stripped envelopes while its own consent is not met (spec-tracker §3). The default MUST be `"required"` so
 pre-consent delivery is an explicit opt-in by the integrator, never a silent default.
 
 **Conditions for exemption.** A sink MAY be declared `"exempt"` only if it satisfies **all** of the following (CNIL
@@ -74,7 +79,9 @@ the page-load bootstrap cannot drift:
    `dataLayer`).
 2. Read the stored consent record synchronously from the consent store (this is why the record is plain JSON —
    spec-consent §5), validating policy version and decision shape inline; failures fall back to the baked-in default
-   decision. Shared/cached HTML MUST bake the strictest default and upgrade after hydration (spec-server-lane).
+   decision. Shared/cached HTML MUST bake the strictest default and upgrade after hydration (spec-server-lane). Then
+   apply the GPC step of spec-consent §7: a live `navigator.globalPrivacyControl` forces `ads` denied, over a stored
+   grant too.
 3. Issue the consent **default** signal from that decision.
 4. **Then always load the tag** — advanced Consent Mode: the tag runs even when storage is denied (cookieless
    pings/modeling). The default signal MUST precede tag load.
@@ -126,11 +133,19 @@ Unlike GA4's unified Consent Mode object, other platforms expose per-vendor shap
 | **Meta Pixel / CAPI**         | transmission gate: `fbq('consent','revoke'\|'grant')` (Pixel); gate at send boundary (CAPI — no consent field) | Limited Data Use: `fbq('dataProcessingOptions',['LDU'],0,0)` (Pixel); `data_processing_options` (CAPI)                | `0,0` = let Meta geolocate (recommended). Only country `1`=USA, state `1000`=California are documented codes — **not FIPS**; use `0,0` beyond California                                                                         |
 | **TikTok Pixel / Events API** | `ttq.holdConsent()` before load, then `ttq.grantConsent()`/`revokeConsent()`                                   | LDU: `ttq.load(id,{limited_data_use:true})` or per-event; server `limited_data_use:true` (**requires IP in payload**) | single boolean, **not** Meta's `data_processing_options` structure; no signal object; `ttq.updateConsent()` is legacy — do not use                                                                                               |
 
-Cross-cutting: a US opt-out (`ads = false` via GPC/GPP) maps to LDU on Meta/TikTok and `ad_storage: denied` on UET/GA4,
-but MUST NOT withdraw first-party `analytics` (spec-consent §3). What breaks if consent is wrong is legal (EEA users
-excluded from ad audiences; unlawful pre-consent hits) and often silent (a left-on `revoke` withholds everything; LDU
-without an IP does nothing) — so these mappings are normative, not advisory. For programmatic ad serving in the
-EEA/UK/CH the platform decision comes from a CMP, not this native mapping — see
+**Transmission.** An ad destination transmits only when `ads` is granted. The one exception is an opt-out regime (a US
+"do not sell or share" opt-out, `ads = false` via GPC/GPP), where delivery under Limited Data Use substitutes for the
+`ads` grant: there, `analytics` granted is enough, and the event carries LDU on Meta/TikTok and `ad_storage: denied` on
+UET. Requiring `analytics` is this specification's policy, not a platform rule: LDU reduces the delivery to restricted
+measurement processing, so it rests on the measurement purpose, and a visitor who denied both `ads` and `analytics` has
+refused every purpose the delivery could serve — the ad platform receives nothing. The integrator enables that
+substitution per evaluation (wired to the resolved mode being `opt-out`); LDU itself follows the decision `send`
+receives (§1), and with no decision the destination MUST apply it. Under opt-in the substitution MUST stay off, because
+LDU is a CCPA mechanism and does not stand in for consent — an ad platform without `ads` consent receives nothing.
+Either way the opt-out MUST NOT withdraw first-party `analytics` (spec-consent §3). What breaks if consent is wrong is
+legal (EEA users excluded from ad audiences; unlawful pre-consent hits) and often silent (a left-on `revoke` withholds
+everything; LDU without an IP does nothing) — so these mappings are normative, not advisory. For programmatic ad serving
+in the EEA/UK/CH the platform decision comes from a CMP, not this native mapping — see
 [spec-ad-consent-frameworks](spec-ad-consent-frameworks.md).
 
 ## 6. Reference destination: cookieless counter (Vercel Analytics shape)
@@ -150,13 +165,19 @@ the app. Properties flatten per §3 with null allowed.
 
 **V3 — bootstrap fallback.** Stored record valid under the current policy version → its decision drives the default
 signal. Record under an old version, malformed, or absent → the baked default drives it. In every case the default
-signal precedes tag load, and the tag loads even when all-denied.
+signal precedes tag load, and the tag loads even when all-denied. A stored `{ads:true, analytics:true}` with GPC present
+drives `{ad_personalization:"denied", ad_storage:"denied", ad_user_data:"denied", analytics_storage:"granted"}`.
 
 **V4 — GA4 name guard.** `"newsletter_signup"` sent; `"9lives"`, `"has-dash"`, and a 41-char name → warned and skipped,
 nothing sent.
 
 **V5 — cookie cleanup.** Cookies `_ga`, `_ga_ABC123`, `_gcl_au` present; withdrawal expires `_ga` and `_ga_ABC123` (both
 domain variants) and leaves `_gcl_au` untouched.
+
+**V6 — ad transmission.** `{ads:false, analytics:true}` with LDU substitution off → no transmission (LDU on); with it on
+→ transmits under LDU. `{ads:false, analytics:false}` with it on → no transmission. `{ads:true, analytics:false}` →
+transmits, LDU off. LDU follows the decision `send` receives, so a stored `ads` grant overridden by GPC transmits (with
+the substitution on) under LDU; no decision → LDU on.
 
 ## License
 

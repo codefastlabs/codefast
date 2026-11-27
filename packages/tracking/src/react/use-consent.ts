@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useRef, useSyncExternalStore } from "react";
 
 import type { ConsentDecision, ConsentMode, ConsentStorage } from "#core/consent";
-import { CONSENT_CATEGORIES, createConsentDecision, readStoredDecision, resolveDefaultConsent } from "#core/consent";
+import { CONSENT_CATEGORIES, createConsentDecision, readStoredDecision, resolveEffectiveConsent } from "#core/consent";
 import type { ConsentConfig } from "#core/consent-config";
 
 /**
@@ -30,10 +30,10 @@ export interface UseConsentResult {
   /** The stored decision under the current policy version — `undefined` until the visitor makes one. */
   decision: ConsentDecision | undefined;
   denyAll: () => void;
-  /** What tags must obey right now — the stored decision, or the region default before one exists. */
+  /** What tags must obey right now — the stored decision or the region default, with GPC forcing `ads` denied. */
   effectiveConsent: ConsentDecision;
   grantAll: () => void;
-  /** Effective `analytics` consent — gates this package's own tracker pipeline. */
+  /** Effective `analytics` consent — shorthand for `effectiveConsent.analytics`. */
   isAnalyticsAllowed: boolean;
   /** True only for opt-in regions with no stored decision yet — drives whether to render the banner. */
   isPromptNeeded: boolean;
@@ -42,7 +42,7 @@ export interface UseConsentResult {
 }
 
 /**
- * Bridges `resolveConsentMode`/`resolveDefaultConsent` (core, region-aware) to React via
+ * Bridges `resolveEffectiveConsent` (core, region-aware) to React via
  * `useSyncExternalStore`: the stored record is the single source of truth, hydration is
  * safe by construction (the server snapshot is always "no decision yet", matching what
  * prerendered HTML could know), and a decision made in another tab syncs through the
@@ -105,8 +105,11 @@ export function useConsent(options: UseConsentOptions): UseConsentResult {
     saveDecision(createConsentDecision(requestedCategories));
   }, [requestedCategories, saveDecision]);
 
-  const effectiveConsent =
-    decision ?? resolveDefaultConsent({ hasGlobalPrivacyControlSignal, mode, requestedCategories });
+  const effectiveConsent = useMemo(
+    () =>
+      resolveEffectiveConsent({ hasGlobalPrivacyControlSignal, mode, requestedCategories, storedDecision: decision }),
+    [decision, hasGlobalPrivacyControlSignal, mode, requestedCategories],
+  );
 
   return useMemo(
     () => ({

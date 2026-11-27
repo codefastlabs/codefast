@@ -4,6 +4,23 @@ Versioning for the tracking specification itself, independent of the `@codefast/
 
 Because the extension documents cite fast-moving law and platform contracts, a **citation refresh** (re-verifying a source, correcting an access-dated fact) is a patch even when it changes a jurisdictional claim — the _engineering_ contract is unchanged. When a re-verified legal fact changes what an implementation must _do_ (e.g. a region's `optOutSignalBinding` flips), that is a minor.
 
+## 2.0.0 — 2026-11-27
+
+### GPC precedence and per-destination consent (major)
+
+- **spec-consent §7 — GPC applies last.** Effective consent is `stored ?? default`, then GPC forces `ads` denied. A
+  signal turned on after the visitor granted `ads` now revokes it, matching the CMP precedence in
+  spec-ad-consent-frameworks §3; every surface, the tag bootstrap included, derives from this one rule. New vector V9.
+- **spec-tracker §2 — the gate is per destination.** The tracker reads the effective decision once per event
+  (`getConsent`, replacing the single `isAnalyticsAllowed` boolean) and asks each destination whether it is permitted.
+  An `analytics` grant no longer opens an advertising destination, and an `analytics` denial no longer blocks one the
+  visitor granted `ads` to. Vectors V1–V4 restated over decisions; new vector V7.
+- **spec-destinations §1, §5 — `isPermittedBy`.** A destination declares the consent it needs (default `analytics`). Ad
+  destinations transmit only on an `ads` grant; Limited Data Use substitutes for it only under an opt-out regime, enabled
+  by the integrator, never under opt-in. §4's bootstrap applies the GPC step; V3 extended. `send` receives the decision
+  the gate admitted the event under, and LDU derives from it rather than from a second consent read; V6 extended.
+- **spec-server-lane §4** — the runtime composes an effective-consent reader instead of an analytics gate.
+
 ## 1.0.3 — 2026-07-18
 
 ### Status refresh across the implemented extensions (patch)

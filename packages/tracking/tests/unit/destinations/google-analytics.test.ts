@@ -38,14 +38,17 @@ describe("createGoogleAnalyticsDestination", () => {
   it("forwards the event name and allowed-type properties to gtag('event', ...)", () => {
     const destination = createGoogleAnalyticsDestination();
 
-    void destination.send({
-      anonymousId: "anon-1",
-      eventId: "e1",
-      name: "button_clicked",
-      properties: { count: 3, id: "cta", primary: true },
-      timestamp: 0,
-      type: "track",
-    });
+    void destination.send(
+      {
+        anonymousId: "anon-1",
+        eventId: "e1",
+        name: "button_clicked",
+        properties: { count: 3, id: "cta", primary: true },
+        timestamp: 0,
+        type: "track",
+      },
+      undefined,
+    );
 
     expect(gtag).toHaveBeenCalledWith("event", "button_clicked", { count: 3, id: "cta", primary: true });
   });
@@ -53,14 +56,17 @@ describe("createGoogleAnalyticsDestination", () => {
   it("stringifies properties gtag.js can't accept (nested objects/arrays)", () => {
     const destination = createGoogleAnalyticsDestination();
 
-    void destination.send({
-      anonymousId: "anon-1",
-      eventId: "e2",
-      name: "order_completed",
-      properties: { items: ["a", "b"] },
-      timestamp: 0,
-      type: "track",
-    });
+    void destination.send(
+      {
+        anonymousId: "anon-1",
+        eventId: "e2",
+        name: "order_completed",
+        properties: { items: ["a", "b"] },
+        timestamp: 0,
+        type: "track",
+      },
+      undefined,
+    );
 
     expect(gtag).toHaveBeenCalledWith("event", "order_completed", { items: '["a","b"]' });
   });
@@ -68,14 +74,17 @@ describe("createGoogleAnalyticsDestination", () => {
   it("drops undefined and null properties instead of forwarding them", () => {
     const destination = createGoogleAnalyticsDestination();
 
-    void destination.send({
-      anonymousId: "anon-1",
-      eventId: "e3",
-      name: "page_viewed",
-      properties: { referrer: undefined, url: null },
-      timestamp: 0,
-      type: "track",
-    });
+    void destination.send(
+      {
+        anonymousId: "anon-1",
+        eventId: "e3",
+        name: "page_viewed",
+        properties: { referrer: undefined, url: null },
+        timestamp: 0,
+        type: "track",
+      },
+      undefined,
+    );
 
     expect(gtag).toHaveBeenCalledWith("event", "page_viewed", {});
   });
@@ -84,14 +93,17 @@ describe("createGoogleAnalyticsDestination", () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
     const destination = createGoogleAnalyticsDestination();
 
-    void destination.send({
-      anonymousId: "anon-1",
-      eventId: "e8",
-      name: "invalid-name",
-      properties: {},
-      timestamp: 0,
-      type: "track",
-    });
+    void destination.send(
+      {
+        anonymousId: "anon-1",
+        eventId: "e8",
+        name: "invalid-name",
+        properties: {},
+        timestamp: 0,
+        type: "track",
+      },
+      undefined,
+    );
 
     expect(gtag).not.toHaveBeenCalled();
     expect(warn).toHaveBeenCalledOnce();
@@ -112,14 +124,17 @@ describe("createGoogleAnalyticsDestination", () => {
     const destination = createGoogleAnalyticsDestination();
 
     expect(() => {
-      void destination.send({
-        anonymousId: "anon-1",
-        eventId: "e9",
-        name: "button_clicked",
-        properties: {},
-        timestamp: 0,
-        type: "track",
-      });
+      void destination.send(
+        {
+          anonymousId: "anon-1",
+          eventId: "e9",
+          name: "button_clicked",
+          properties: {},
+          timestamp: 0,
+          type: "track",
+        },
+        undefined,
+      );
     }).not.toThrow();
 
     expect(gtag).not.toHaveBeenCalled();
@@ -228,6 +243,33 @@ describe("buildGtagConsentBootstrapScript", () => {
     // consent default + js + config — tag loads for cookieless pings / modeling
     expect(window.dataLayer).toHaveLength(3);
     expect(gtagScriptElement()?.src).toBe("https://www.googletagmanager.com/gtag/js?id=G-TEST123");
+  });
+
+  it("lets a live GPC signal deny ads over a stored grant", () => {
+    window.localStorage.setItem(
+      "k",
+      JSON.stringify({ decision: { ads: true, analytics: true }, policyVersion: "1", timestamp: 0 }),
+    );
+    Object.defineProperty(navigator, "globalPrivacyControl", { configurable: true, value: true });
+
+    try {
+      runScript(
+        buildGtagConsentBootstrapScript({
+          config: BOOTSTRAP_CONFIG,
+          defaultConsent: { ads: false, analytics: false },
+          gaMeasurementId: "G-TEST123",
+        }),
+      );
+    } finally {
+      Reflect.deleteProperty(navigator, "globalPrivacyControl");
+    }
+
+    expect(consentDefaultParams()).toEqual({
+      ad_personalization: "denied",
+      ad_storage: "denied",
+      ad_user_data: "denied",
+      analytics_storage: "granted",
+    });
   });
 
   it("prefers a stored decision over defaultConsent", () => {

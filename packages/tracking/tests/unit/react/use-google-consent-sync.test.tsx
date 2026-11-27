@@ -79,4 +79,29 @@ describe("useGoogleConsentSync", () => {
     expect(updateGoogleConsent).toHaveBeenCalledWith({ ads: false, analytics: false });
     expect(loadGtagScript).not.toHaveBeenCalled();
   });
+
+  it("keeps a stored ads grant denied in Consent Mode when GPC is on", () => {
+    const storage = createMemoryConsentStorage();
+    storage.save({
+      decision: { ads: true, analytics: true },
+      policyVersion: "v1",
+      timestamp: Date.now(),
+    });
+
+    renderHook(() => {
+      const consent = useConsent({
+        config: { ...V1_CONFIG, requestedCategories: ["analytics", "ads"] },
+        hasGlobalPrivacyControlSignal: true,
+        mode: "opt-out",
+        storage,
+      });
+
+      useGoogleConsentSync(consent);
+
+      return consent;
+    });
+
+    expect(updateGoogleConsent).toHaveBeenCalledWith({ ads: false, analytics: true });
+    expect(updateGoogleConsent).not.toHaveBeenCalledWith({ ads: true, analytics: true });
+  });
 });

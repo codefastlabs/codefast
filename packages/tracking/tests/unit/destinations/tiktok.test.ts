@@ -19,11 +19,11 @@ describe("toTiktokConsent", () => {
 });
 
 describe("createTiktokDestination", () => {
-  it("maps the event and the live ads decision into the transport payload", async () => {
+  it("maps the event and its consent into the transport payload", async () => {
     const transport = vi.fn();
-    const destination = createTiktokDestination({ getDecision: () => ({ ads: false, analytics: true }), transport });
+    const destination = createTiktokDestination({ transport });
 
-    await destination.send(event);
+    await destination.send(event, { ads: false, analytics: true });
 
     expect(transport).toHaveBeenCalledWith({
       consent: { limited_data_use: true },
@@ -37,12 +37,11 @@ describe("createTiktokDestination", () => {
     const clearCookies = vi.fn();
     const destination = createTiktokDestination({
       clearCookies,
-      getDecision: () => ({ ads: true, analytics: true }),
       transport,
     });
 
     await destination.onErasure?.("subject-1");
-    await destination.send(event);
+    await destination.send(event, { ads: true, analytics: true });
 
     expect(clearCookies).toHaveBeenCalledOnce();
     expect(transport).not.toHaveBeenCalled();

@@ -272,27 +272,29 @@ export function readStoredDecision(storage: ConsentStorage, policyVersion: strin
  * @since 0.5.0-canary.6
  */
 export interface ResolveEffectiveConsentOptions {
-  /** A "do not sell or share" opt-out — forces `ads` denied under opt-out regions. */
+  /** A "do not sell or share" opt-out — forces `ads` denied over the stored decision and the region default alike. */
   hasGlobalPrivacyControlSignal: boolean;
   mode: ConsentMode;
-  policyVersion: string;
   requestedCategories: ReadonlyArray<ConsentCategory>;
-  storage: ConsentStorage;
+  /** The visitor's decision under the current policy version, typically from `readStoredDecision`. */
+  storedDecision: ConsentDecision | undefined;
 }
 
 /**
- * The consent a tracker should honor right now: the stored decision if one exists, else
- * the region default — the same rule `useConsent` applies to its `effectiveConsent`, so a
- * non-React gate (e.g. a tracker's `isAnalyticsAllowed` option) doesn't have to reimplement
- * "read storage, validate the policy version, fall back to `resolveDefaultConsent`" itself.
+ * The consent every surface must honor right now: the stored decision, else the region
+ * default, then tightened by Global Privacy Control.
+ *
+ * @remarks
+ * GPC applies last so a signal turned on after the visitor granted `ads` still revokes it —
+ * the same precedence `reconcileAdFrameworkConsent` gives GPC over a CMP grant. A decision
+ * GPC leaves untouched is returned as-is, so a cached stored decision keeps its identity.
  *
  * @since 0.5.0-canary.6
  */
 export function resolveEffectiveConsent(options: ResolveEffectiveConsentOptions): ConsentDecision {
-  const { hasGlobalPrivacyControlSignal, mode, policyVersion, requestedCategories, storage } = options;
+  const { hasGlobalPrivacyControlSignal, mode, requestedCategories, storedDecision } = options;
+  const decision =
+    storedDecision ?? resolveDefaultConsent({ hasGlobalPrivacyControlSignal, mode, requestedCategories });
 
-  return (
-    readStoredDecision(storage, policyVersion) ??
-    resolveDefaultConsent({ hasGlobalPrivacyControlSignal, mode, requestedCategories })
-  );
+  return hasGlobalPrivacyControlSignal && decision.ads ? { ...decision, ads: false } : decision;
 }

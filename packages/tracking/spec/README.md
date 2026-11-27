@@ -1,6 +1,6 @@
 # Consent-Gated Event Tracking — Specification
 
-Status: active. **Spec version 1.0.3** ([CHANGELOG](CHANGELOG.md)). Language-neutral specification of the tracking
+Status: active. **Spec version 2.0.0** ([CHANGELOG](CHANGELOG.md)). Language-neutral specification of the tracking
 system implemented by `@codefast/tracking`. Any conforming implementation — in any modern language, on any client/server
 pairing — must satisfy the normative documents below; the TypeScript package is the reference implementation.
 

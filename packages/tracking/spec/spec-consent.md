@@ -106,11 +106,16 @@ The persisted record:
 The consent a tracker and every tag MUST honor right now:
 
 ```
-effectiveConsent = readStoredDecision(storage, policyVersion)
+decision         = readStoredDecision(storage, policyVersion)
                    ?? resolveDefaultConsent(mode, requestedCategories, hasGpcSignal)
+effectiveConsent = hasGpcSignal ? decision with ads = false : decision
 ```
 
-- `isAnalyticsAllowed = effectiveConsent.analytics` — this single boolean gates the tracking pipeline.
+- GPC applies **last**, over the stored decision as well as the default: a signal turned on after the visitor granted
+  `ads` MUST revoke it, exactly as it tightens a CMP grant (spec-ad-consent-frameworks §3). It still leaves `analytics`
+  alone, and it never rewrites the stored record — turning the signal off restores the stored grant.
+- Every surface — the tracker (spec-tracker §2, per destination), the UI, and the tag bootstrap (spec-destinations §4) —
+  MUST derive from this one rule; a tag bootstrap that reads storage directly MUST apply the GPC step too.
 - The GPC signal MUST be re-read at each evaluation (it can change mid-session).
 - **Prompt rule**: a consent prompt is needed iff `mode == "opt-in"` and no stored decision exists. Opt-out regions
   never block on a prompt.
@@ -164,6 +169,10 @@ returns none; effective consent falls back to the regional default; prompt neede
 (strictest exception). `{…, mode:"opt-out", region:"other"}` valid (usual pairing). `{…, mode:"opt-out", region:"eu"}`
 invalid (looser than the region's mode). `{…, mode:"opt-in", region:"us"}` invalid (only the strictest constant's
 pairing may deviate).
+
+**V9 — GPC over a stored grant.** Any mode, stored decision `{ads:true, analytics:true}`, GPC present → effective
+`{ads:false, analytics:true}`; GPC absent → `{ads:true, analytics:true}`. Stored `{ads:true, analytics:false}`, GPC
+present → `{ads:false, analytics:false}`.
 
 ## License
 

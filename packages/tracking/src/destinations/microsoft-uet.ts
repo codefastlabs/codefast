@@ -1,13 +1,13 @@
 import type { ConsentDecision } from "#core/consent";
 import type { Destination } from "#core/destination";
-import { toAdConsentState } from "#destinations/ad-consent";
+import { resolveAdDecision, toAdConsentState } from "#destinations/ad-consent";
 import type { FlatPropertyValue } from "#destinations/shared";
 import { flattenEventProps } from "#destinations/shared";
 
 /**
  * Microsoft UET consent. UET enforces **only** `ad_storage` — it has no `analytics_storage`,
  * and its `ad_user_data`/`ad_personalization` fields have no documented behavior, so this
- * models the one enforced signal (spec-destinations §5). Pushed via
+ * models the one enforced signal. Pushed via
  * `uetq.push('consent','update', …)`.
  *
  * @since 0.5.0-canary.6
@@ -43,10 +43,14 @@ export interface MicrosoftUetEventPayload {
  * @since 0.5.0-canary.6
  */
 export interface MicrosoftUetDestinationOptions {
-  /** Erasure cookie-clear seam — UET exposes no per-visitor deletion API, so erasure is cookie-clear + stop-send (DSR-V4). */
+  /** Erasure cookie-clear seam — UET has no per-visitor deletion API, so erasure is cookie-clear and stop-send. */
   clearCookies?: (() => void) | undefined;
-  /** Read per event so an `ads` change updates `ad_storage` without recreating the destination. */
-  getDecision: () => ConsentDecision;
+  /**
+   * Whether delivering under Limited Data Use substitutes for an `ads` grant right now — wire
+   * it to the resolved mode being `"opt-out"`. Read per event. Omit to withhold the
+   * destination whenever `ads` is denied, the only lawful default under opt-in.
+   */
+  isLimitedDataUseAllowed?: (() => boolean) | undefined;
   name?: string | undefined;
   /**
    * Delivers one mapped event — the transport seam. Wire it to `uetq.push(...)`; this package
@@ -56,7 +60,7 @@ export interface MicrosoftUetDestinationOptions {
 }
 
 /**
- * Reference ad destination for Microsoft UET: maps each event and the live `ads` decision to
+ * Reference ad destination for Microsoft UET: maps each event and the consent it was admitted under to
  * UET's `ad_storage` signal, then hands it to an injected transport. Consent-restriction
  * mapping only — the tag id and `uetq` transport are the integrator's. `consentRequirement`
  * stays `"required"`.
@@ -68,18 +72,21 @@ export function createMicrosoftUetDestination(options: MicrosoftUetDestinationOp
 
   return {
     consentRequirement: "required",
+    isPermittedBy: (consent) =>
+      toAdConsentState(consent, { isLimitedDataUseAllowed: options.isLimitedDataUseAllowed?.() === true })
+        .transmissionAllowed,
     name: options.name ?? "microsoft-uet",
     onErasure() {
       stopped = true;
       options.clearCookies?.();
     },
-    async send(event) {
+    async send(event, consent) {
       if (stopped) {
         return;
       }
 
       await options.transport({
-        consent: toMicrosoftUetConsent(options.getDecision()),
+        consent: toMicrosoftUetConsent(resolveAdDecision(consent)),
         name: event.name,
         properties: flattenEventProps(event.properties),
       });

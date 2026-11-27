@@ -1,9 +1,9 @@
 /**
- * DSR delegation for GA4 (spec-data-subject-rights §3): the platform ships its own
+ * DSR delegation for GA4: the platform ships its own
  * per-visitor deletion, so the system **delegates** rather than reimplementing a deletion
  * store. Targets the current **Analytics Admin API** `properties.submitUserDeletion` — the
- * legacy v3 `userDeletionRequests:upsert` was sunset with Universal Analytics, so the spec's
- * DSR-V3 `{ id: { type: "CLIENT_ID", userId } }` shape is stale; the current request keys the
+ * legacy v3 `userDeletionRequests:upsert` was sunset with Universal Analytics, so the
+ * `{ id: { type: "CLIENT_ID", userId } }` shape is stale; the current request keys the
  * subject with a flat `clientId` (a oneof with `userId`/`appInstanceId`/`userProvidedData`).
  *
  * @see https://developers.google.com/analytics/devguides/config/userdeletion/migration
@@ -79,7 +79,7 @@ export interface SubmitGa4UserDeletionOptions {
  * pass a bearer token minted from a service account (never baked into the package). The
  * deletion removes the subject from the Individual User report within ~72h and purges at the
  * next run; it does **not** reach previously-aggregated reports or BigQuery exports
- * (spec-data-subject-rights §3).
+ *.
  *
  * @since 0.5.0-canary.6
  */

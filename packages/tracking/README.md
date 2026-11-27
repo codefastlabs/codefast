@@ -93,16 +93,23 @@ export const tracker = createClientTracker({
     createVercelAnalyticsDestination({ consentRequirement: "exempt" }),
     createGoogleAnalyticsDestination(),
   ],
-  isAnalyticsAllowed: consentRuntime.isAnalyticsAllowed,
+  getConsent: consentRuntime.getEffectiveConsent,
 });
 
 tracker.track("copy_code", { name: "button" }); // typed + runtime-validated
 ```
 
 `anonymousId` is a callback, not a value: the tracker calls it per allowed event, so the id is only minted once an event
-is actually permitted to send. `isAnalyticsAllowed` is consulted before every event; while it returns `false`, only
-`consentRequirement: "exempt"` destinations still receive events, stripped of identifiers. Pass `isExemptionAllowed` to
+is actually permitted to send. `getConsent` is read before every event and checked against each destination on its own:
+a measurement sink needs `analytics`, an ad destination (Meta, TikTok, Microsoft UET) needs `ads`, so an analytics grant
+never opens an ad platform. A destination its consent does not permit receives nothing, unless it is
+`consentRequirement: "exempt"`, which still receives the event stripped of identifiers. Pass `isExemptionAllowed` to
 gate even that lane per region, and `onDeliveryError` to meter a destination that throws or rejects.
+
+An ad destination sends with `ads` denied only where Limited Data Use stands in for it — a US opt-out. Opt in per
+destination with
+`isLimitedDataUseAllowed: () => runtime.initialConsentStore.getSnapshot().initialConsent.mode === "opt-out"`; leave it
+off and the destination is withheld whenever `ads` is denied, which is the only lawful default under opt-in.
 
 ## Event catalog
 
@@ -136,9 +143,10 @@ tracker: destinations batch in-page, and the server half of the package is conse
 ## Consent
 
 `ConsentDecision` is per purpose (`{ ads, analytics }`). The region resolves the mode: the EU (plus the UK, Iceland,
-Liechtenstein, and Norway) and Vietnam are **opt-in**; the US and unrecognized countries are **opt-out**. Under opt-out,
-a Global Privacy Control signal forces `ads` denied and leaves first-party analytics alone. Stored records carry a
-`policyVersion`; a malformed record, or one saved under another version, counts as no decision and re-prompts.
+Liechtenstein, and Norway) and Vietnam are **opt-in**; the US and unrecognized countries are **opt-out**. A Global
+Privacy Control signal forces `ads` denied and leaves first-party analytics alone — over a stored `ads` grant too, so a
+signal turned on after the visitor accepted still revokes advertising. Stored records carry a `policyVersion`; a
+malformed record, or one saved under another version, counts as no decision and re-prompts.
 
 ```tsx
 import { useConsent } from "@codefast/tracking/react/use-consent";

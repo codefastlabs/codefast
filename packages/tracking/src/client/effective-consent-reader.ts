@@ -1,18 +1,16 @@
-import type { ConsentMode, ConsentStorage } from "#core/consent";
-import { resolveEffectiveConsent } from "#core/consent";
+import type { ConsentDecision, ConsentMode, ConsentStorage } from "#core/consent";
+import { readStoredDecision, resolveEffectiveConsent } from "#core/consent";
 import type { ConsentConfig } from "#core/consent-config";
 
 /**
- * Options for `createIsAnalyticsAllowed`.
- *
- * @since 0.5.0-canary.6
+ * Options for `createEffectiveConsentReader`.
  */
-export interface IsAnalyticsAllowedOptions {
+export interface EffectiveConsentReaderOptions {
   /** Must be the same object `useConsent` receives — one config, every surface. */
   config: ConsentConfig;
   /**
    * Re-read each call. Pass `hasGlobalPrivacyControlSignal` from `@codefast/tracking/client`
-   * (or a wrapper) so GPC changes apply without recreating the gate.
+   * (or a wrapper) so GPC changes apply without recreating the reader.
    */
   hasGlobalPrivacyControlSignal?: (() => boolean) | undefined;
   /** Re-read each call so a post-hydration region resolve can win. */
@@ -22,24 +20,18 @@ export interface IsAnalyticsAllowedOptions {
 }
 
 /**
- * Non-React mirror of `useConsent`'s `isAnalyticsAllowed` — pass the returned function as
- * `createClientTracker({ isAnalyticsAllowed })` so the pipeline and the banner share one rule.
- *
- * @since 0.5.0-canary.6
+ * Creates a non-React reader of `useConsent`'s `effectiveConsent` — pass it as
+ * `createClientTracker({ getConsent })` so the pipeline and the banner share one rule.
  */
-export function createIsAnalyticsAllowed(options: IsAnalyticsAllowedOptions): () => boolean {
+export function createEffectiveConsentReader(options: EffectiveConsentReaderOptions): () => ConsentDecision {
   const { config, getMode, storage } = options;
   const readGpc = options.hasGlobalPrivacyControlSignal ?? (() => false);
 
-  return (): boolean => {
-    const effectiveConsent = resolveEffectiveConsent({
+  return (): ConsentDecision =>
+    resolveEffectiveConsent({
       hasGlobalPrivacyControlSignal: readGpc(),
       mode: getMode(),
-      policyVersion: config.policyVersion,
       requestedCategories: config.requestedCategories,
-      storage,
+      storedDecision: readStoredDecision(storage, config.policyVersion),
     });
-
-    return effectiveConsent.analytics;
-  };
 }

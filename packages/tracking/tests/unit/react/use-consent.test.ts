@@ -51,6 +51,26 @@ describe("useConsent", () => {
     expect(result.current.isAnalyticsAllowed).toBe(true);
   });
 
+  it("lets GPC revoke ads over a stored grant, keeping the stored decision itself intact", () => {
+    const storage = createMemoryConsentStorage({
+      decision: { ads: true, analytics: true },
+      policyVersion: "v1",
+      timestamp: 0,
+    });
+    const { rerender, result } = renderHook(
+      ({ hasGlobalPrivacyControlSignal }) =>
+        useConsent({ config: V1_BOTH_CONFIG, hasGlobalPrivacyControlSignal, mode: "opt-out", storage }),
+      { initialProps: { hasGlobalPrivacyControlSignal: false } },
+    );
+
+    expect(result.current.effectiveConsent).toEqual({ ads: true, analytics: true });
+
+    rerender({ hasGlobalPrivacyControlSignal: true });
+
+    expect(result.current.effectiveConsent).toEqual({ ads: false, analytics: true });
+    expect(result.current.decision).toEqual({ ads: true, analytics: true });
+  });
+
   it("grantAll grants only the requested categories, denyAll denies everything, both call onDecision", () => {
     const storage = createMemoryConsentStorage();
     const onDecision = vi.fn();

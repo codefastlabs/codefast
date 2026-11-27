@@ -1,9 +1,9 @@
 import { createLocalStorageConsentStorage } from "#client/consent-storage";
+import { createEffectiveConsentReader } from "#client/effective-consent-reader";
 import { hasGlobalPrivacyControlSignal } from "#client/gpc";
 import type { InitialConsentStore } from "#client/initial-consent-store";
 import { createInitialConsentStore } from "#client/initial-consent-store";
-import { createIsAnalyticsAllowed } from "#client/is-analytics-allowed";
-import type { ConsentStorage, InitialConsent } from "#core/consent";
+import type { ConsentDecision, ConsentStorage, InitialConsent } from "#core/consent";
 import type { ConsentConfig } from "#core/consent-config";
 
 /**
@@ -13,7 +13,7 @@ import type { ConsentConfig } from "#core/consent-config";
  */
 export interface ConsentRuntimeOptions {
   config: ConsentConfig;
-  /** Re-read per event so a GPC change applies without recreating the runtime. Defaults to the real navigator signal. */
+  /** Re-read per event, so a GPC change applies without recreating the runtime. Defaults to the navigator's. */
   hasGlobalPrivacyControlSignal?: (() => boolean) | undefined;
   /**
    * `sessionStorage` key caching the resolved region default, so only the first page
@@ -45,8 +45,8 @@ export interface ConsentRuntime {
   ensureInitialConsentResolved: () => void;
   /** Feed to `useInitialConsent` for the reactive region default. */
   initialConsentStore: InitialConsentStore;
-  /** Non-React gate for `createClientTracker` — the same rule `useConsent` applies. */
-  isAnalyticsAllowed: () => boolean;
+  /** The visitor's effective consent now, by the rule `useConsent` applies — the tracker's `getConsent`. */
+  getEffectiveConsent: () => ConsentDecision;
   /** The one `ConsentStorage` instance every surface must share. */
   storage: ConsentStorage;
 }
@@ -54,7 +54,7 @@ export interface ConsentRuntime {
 /**
  * Composes the client half of the consent lane from a single `ConsentConfig`:
  * `localStorage`-backed decision storage, the initial-consent store over the app's
- * server lane, and the non-React analytics gate wired to that store's resolved mode.
+ * server lane, and the non-React effective-consent reader wired to that store's resolved mode.
  *
  * @since 0.5.0-canary.6
  */
@@ -65,7 +65,7 @@ export function createConsentRuntime(options: ConsentRuntimeOptions): ConsentRun
     resolve: options.resolveInitialConsent,
     sessionStorageKey: options.initialConsentSessionStorageKey,
   });
-  const isAnalyticsAllowed = createIsAnalyticsAllowed({
+  const getEffectiveConsent = createEffectiveConsentReader({
     config,
     getMode: () => initialConsentStore.getSnapshot().initialConsent.mode,
     hasGlobalPrivacyControlSignal: options.hasGlobalPrivacyControlSignal ?? hasGlobalPrivacyControlSignal,
@@ -75,8 +75,8 @@ export function createConsentRuntime(options: ConsentRuntimeOptions): ConsentRun
   return {
     config,
     ensureInitialConsentResolved: initialConsentStore.ensureResolved,
+    getEffectiveConsent,
     initialConsentStore,
-    isAnalyticsAllowed,
     storage,
   };
 }

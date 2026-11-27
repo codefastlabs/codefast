@@ -11,11 +11,10 @@ export const RECEIPT_SCHEMA_VERSION = "1.0.0";
 const IPV4_PATTERN = /^(\d{1,3}\.){3}\d{1,3}$/;
 
 /**
- * Coarsens an IP for storage — a full address MUST never be persisted (spec-consent-receipts
- * §4, R5). IPv4 drops the last two octets; IPv6 keeps only the first two hextets. This mirrors
- * the Cookiebot-style anonymization cited in the spec and is the maximally-private default;
- * a controller may widen it under counsel, but the builder never returns a full address.
- * Returns `undefined` for a missing or malformed input rather than storing a bad value.
+ * Coarsens an IP for storage — a full address MUST never be persisted. IPv4 drops the last two octets; IPv6 keeps only
+ * the first two hextets. This mirrors the Cookiebot-style anonymization cited in the spec and is the maximally-private
+ * default; a controller may widen it under counsel, but the builder never returns a full address. Returns `undefined`
+ * for a missing or malformed input rather than storing a bad value.
  *
  * @since 0.5.0-canary.6
  */
@@ -56,7 +55,7 @@ export function coarsenIp(ip: string | null | undefined): string | undefined {
  * @remarks
  * `sign` is optional so the package never bakes a crypto secret: supply an HMAC/signature
  * function to stamp an `integrityKey`, letting a client prove its state matches the stored
- * original (spec-consent-receipts §5). Omit it and receipts carry no integrity key.
+ * original. Omit it and receipts carry no integrity key.
  *
  * @since 0.5.0-canary.6
  */

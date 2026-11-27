@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import * as z from "zod";
 
 import { createClientTracker } from "#client/create-client-tracker";
+import type { ConsentDecision } from "#core/consent";
 import { defineEventCatalog } from "#core/event-catalog";
 import { createRecordingDestination } from "#tests/unit/client/support/fakes";
 
@@ -9,6 +10,9 @@ const catalog = defineEventCatalog({
   button_clicked: { schema: z.object({ id: z.string() }) },
   order_completed: { schema: z.object({ orderId: z.string() }) },
 });
+
+const DENIED: ConsentDecision = { ads: false, analytics: false };
+const GRANTED: ConsentDecision = { ads: true, analytics: true };
 
 describe("createClientTracker", () => {
   it("builds a full envelope and fans it out to every destination", () => {
@@ -84,7 +88,7 @@ describe("createClientTracker", () => {
       anonymousId,
       catalog,
       destinations: [destination],
-      isAnalyticsAllowed: () => false,
+      getConsent: () => DENIED,
     });
 
     tracker.track("button_clicked", { id: "cta" });
@@ -104,7 +108,7 @@ describe("createClientTracker", () => {
       anonymousId: () => "anon-1",
       catalog,
       destinations: [exempt, required],
-      isAnalyticsAllowed: () => false,
+      getConsent: () => DENIED,
     });
 
     tracker.track("button_clicked", { id: "cta" });
@@ -123,7 +127,7 @@ describe("createClientTracker", () => {
       anonymousId: () => "anon-1",
       catalog,
       destinations: [exempt],
-      isAnalyticsAllowed: () => false,
+      getConsent: () => DENIED,
       // e.g. a strict opt-in region where audience-measurement exemption is not defensible
       isExemptionAllowed: () => false,
     });
@@ -143,7 +147,7 @@ describe("createClientTracker", () => {
       anonymousId: () => "anon-1",
       catalog,
       destinations: [exempt, required],
-      isAnalyticsAllowed: () => true,
+      getConsent: () => GRANTED,
       isExemptionAllowed: () => false,
     });
 
@@ -155,6 +159,71 @@ describe("createClientTracker", () => {
     expect(exempt.received[0]?.anonymousId).toBe("anon-1");
   });
 
+  it("withholds an ads destination when analytics is granted but ads is denied", () => {
+    const analytics = createRecordingDestination("analytics");
+    const ads = createRecordingDestination("ads");
+
+    ads.isPermittedBy = (consent) => consent.ads;
+
+    const tracker = createClientTracker({
+      anonymousId: () => "anon-1",
+      catalog,
+      destinations: [analytics, ads],
+      getConsent: () => ({ ads: false, analytics: true }),
+    });
+
+    tracker.track("button_clicked", { id: "cta" });
+
+    expect(analytics.received).toHaveLength(1);
+    expect(ads.received).toHaveLength(0);
+  });
+
+  it("delivers to an ads destination when ads is granted but analytics is denied", () => {
+    const analytics = createRecordingDestination("analytics");
+    const ads = createRecordingDestination("ads");
+
+    ads.isPermittedBy = (consent) => consent.ads;
+
+    const anonymousId = vi.fn(() => "anon-1");
+    const tracker = createClientTracker({
+      anonymousId,
+      catalog,
+      destinations: [analytics, ads],
+      getConsent: () => ({ ads: true, analytics: false }),
+    });
+
+    tracker.track("button_clicked", { id: "cta" });
+
+    expect(analytics.received).toHaveLength(0);
+    expect(ads.received).toHaveLength(1);
+    expect(ads.received[0]?.anonymousId).toBe("anon-1");
+    expect(anonymousId).toHaveBeenCalledOnce();
+  });
+
+  it("strips identifiers only for the exempt sink its consent does not permit", () => {
+    const exempt = createRecordingDestination("exempt");
+
+    exempt.consentRequirement = "exempt";
+
+    const ads = createRecordingDestination("ads");
+
+    ads.isPermittedBy = (consent) => consent.ads;
+
+    const tracker = createClientTracker({
+      anonymousId: () => "anon-1",
+      catalog,
+      destinations: [exempt, ads],
+      getConsent: () => ({ ads: true, analytics: false }),
+    });
+
+    tracker.track("button_clicked", { id: "cta" });
+
+    expect(ads.received[0]?.anonymousId).toBe("anon-1");
+    expect(exempt.received[0]?.anonymousId).toBe("");
+    // One event, two envelopes — the same id lets a downstream join dedupe them.
+    expect(exempt.received[0]?.eventId).toBe(ads.received[0]?.eventId);
+  });
+
   it("re-reads the gate per event so a mid-session grant applies immediately", () => {
     const destination = createRecordingDestination();
     let isAllowed = false;
@@ -162,7 +231,7 @@ describe("createClientTracker", () => {
       anonymousId: () => "anon-1",
       catalog,
       destinations: [destination],
-      isAnalyticsAllowed: () => isAllowed,
+      getConsent: () => (isAllowed ? GRANTED : DENIED),
     });
 
     tracker.track("button_clicked", { id: "before" });
@@ -320,5 +389,21 @@ describe("createClientTracker", () => {
     expect(() => {
       tracker.track("button_clicked", { id: "cta" });
     }).not.toThrow();
+  });
+
+  it("hands each destination the consent its gate admitted the event under", () => {
+    const destination = createRecordingDestination("recorder");
+    const send = vi.spyOn(destination, "send");
+    const gpcTightened: ConsentDecision = { ads: false, analytics: true };
+    const tracker = createClientTracker({
+      anonymousId: () => "anon-1",
+      catalog,
+      destinations: [destination],
+      getConsent: () => gpcTightened,
+    });
+
+    tracker.track("button_clicked", { id: "cta" });
+
+    expect(send).toHaveBeenCalledWith(expect.objectContaining({ name: "button_clicked" }), gpcTightened);
   });
 });

@@ -19,22 +19,26 @@ export interface UseGoogleConsentSyncOptions {
 }
 
 /**
- * Keeps Google Consent Mode v2 in sync with `useConsent`: emits `update` when a stored
- * decision exists (including cross-tab / privacy-page saves), and optionally loads gtag
- * when analytics is effective. Mount once on a page-wide surface (e.g. the footer gate).
+ * Keeps Google Consent Mode v2 in sync with `useConsent`: emits the effective consent as an
+ * `update` once a stored decision exists (including cross-tab / privacy-page saves), and
+ * optionally loads gtag when analytics is effective. Mount once on a page-wide surface (e.g. the footer gate).
  *
  * @since 0.5.0-canary.6
  */
 export function useGoogleConsentSync(consent: UseConsentResult, options: UseGoogleConsentSyncOptions = {}): void {
   const { loadGtagScript } = options;
 
+  const hasDecision = consent.decision !== undefined;
+  const { effectiveConsent } = consent;
+
   useEffect(() => {
-    if (consent.decision !== undefined) {
-      updateGoogleConsent(consent.decision);
+    // The effective consent, not the stored record, so GPC keeps a stored `ads` grant denied in gtag too.
+    if (hasDecision) {
+      updateGoogleConsent(effectiveConsent);
     }
 
-    if (consent.effectiveConsent.analytics) {
+    if (effectiveConsent.analytics) {
       loadGtagScript?.();
     }
-  }, [consent.decision, consent.effectiveConsent.analytics, loadGtagScript]);
+  }, [hasDecision, effectiveConsent, loadGtagScript]);
 }

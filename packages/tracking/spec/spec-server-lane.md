@@ -69,7 +69,8 @@ by construction:
 
 - one consent storage (from `storageKey`),
 - one initial-consent store (over the app's endpoint, with an optional session-cache key),
-- one `isAnalyticsAllowed` gate wired to live GPC and the store's current mode.
+- one effective-consent reader (spec-consent §7) wired to live GPC and the store's current mode — the tracker's
+  `getConsent`.
 
 The UI surface, the tracker gate, and the tag bootstrap MUST all consume these shared instances — two storages or two
 configs is a spec violation (drifting constants are exactly what the single config exists to prevent).
@@ -97,8 +98,9 @@ listeners stop.
 **V7 — cache validation.** A session-cache entry failing the initial-consent guard (e.g.
 `{mode:"opt-out", region:"eu", …}`) is ignored and the endpoint is called.
 
-**V8 — mode re-read.** Gate evaluated before resolution uses opt-in (all denied ⇒ analytics false); after a resolve to
-`us`/opt-out with `analytics` requested and no stored decision, the same gate instance evaluates to true.
+**V8 — mode re-read.** The reader evaluated before resolution uses opt-in (all denied ⇒ analytics false); after a
+resolve to `us`/opt-out with `analytics` requested and no stored decision, the same reader instance returns analytics
+granted.
 
 ## License
 

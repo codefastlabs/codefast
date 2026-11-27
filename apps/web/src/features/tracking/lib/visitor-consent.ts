@@ -46,8 +46,13 @@ export function resetVisitorConsentForTests(): void {
   consentRuntime.initialConsentStore.reset();
 }
 
-/** Non-React gate for `createClientTracker({ isAnalyticsAllowed })`. */
-export const isAnalyticsAllowed = consentRuntime.isAnalyticsAllowed;
+/** The visitor's effective consent — feeds `createClientTracker({ getConsent })`. */
+export const getEffectiveConsent = consentRuntime.getEffectiveConsent;
+
+/** Whether first-party analytics is granted right now — gates the anonymous-id refresh. */
+export function isAnalyticsAllowed(): boolean {
+  return getEffectiveConsent().analytics;
+}
 
 /**
  * Site policy for `createClientTracker({ isExemptionAllowed })`: ePrivacy
