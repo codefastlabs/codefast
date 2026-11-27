@@ -104,7 +104,7 @@ last line.
 | injection-js 2           |  30.9 KB |  8.9 KB |
 | `reflect-metadata` alone |  13.3 KB |  4.2 KB |
 
-`@codefast/di` ships 20.6 KB gzipped, the second largest of 7 libraries, against a checked-in budget of 20,600 B. Most
+`@codefast/di` ships 20.6 KB gzipped, the second largest of 7 libraries, against a checked-in budget of 20,720 B. Most
 of `@codefast/di`'s share is the engine that wins the per-request rows — the resolver, the plan compiler and its code
 generation — and the checking and describing functions stay out of a program that does not call them.
 

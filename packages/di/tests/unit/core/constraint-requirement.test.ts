@@ -12,7 +12,10 @@ import {
   requiringAncestorSlotName,
   requiringAncestorSlotNames,
 } from "#core/constraint-requirement";
+import { token } from "#core/token";
 import type { BindingConstraint } from "#core/types";
+
+const Database = token<unknown>("Database");
 
 function bare(): BindingConstraint {
   return () => true;
@@ -28,14 +31,14 @@ describe("constraint requirements", () => {
 
   it("a helper-built predicate answers both readers", () => {
     const predicate = requiringAncestorSlotName(bare(), {
-      tokenName: "Database",
+      token: Database,
       name: "primary",
       helperName: "whenParentNamed",
     });
 
     expect(constraintRequirementOf(predicate)).toEqual({
       requires: "ancestorSlotName",
-      tokenName: "Database",
+      token: Database,
       name: "primary",
       helperName: "whenParentNamed",
     });
@@ -44,8 +47,8 @@ describe("constraint requirements", () => {
 
   it("a list records one requirement per waited-for name", () => {
     const predicate = requiringAncestorSlotNames(bare(), [
-      { tokenName: undefined, name: "first", helperName: "whenParentTaggedAll" },
-      { tokenName: undefined, name: "second", helperName: "whenParentTaggedAll" },
+      { token: undefined, name: "first", helperName: "whenParentTaggedAll" },
+      { token: undefined, name: "second", helperName: "whenParentTaggedAll" },
     ]);
 
     expect(constraintRequirementsOf(predicate).map((requirement) => requirement.name)).toEqual(["first", "second"]);
@@ -59,12 +62,12 @@ describe("constraint requirements", () => {
 
   it("merging carries one side's requirement, and both sides' requirements in order", () => {
     const left = requiringAncestorSlotName(bare(), {
-      tokenName: undefined,
+      token: undefined,
       name: "first",
       helperName: "whenParentNamed",
     });
     const right = requiringAncestorSlotName(bare(), {
-      tokenName: undefined,
+      token: undefined,
       name: "second",
       helperName: "whenAnyAncestorNamed",
     });
@@ -80,12 +83,12 @@ describe("constraint requirements", () => {
 
   it("a composed composite keeps merging when narrowed again", () => {
     const left = requiringAncestorSlotName(bare(), {
-      tokenName: undefined,
+      token: undefined,
       name: "first",
       helperName: "whenParentNamed",
     });
     const right = requiringAncestorSlotName(bare(), {
-      tokenName: undefined,
+      token: undefined,
       name: "second",
       helperName: "whenAnyAncestorNamed",
     });
@@ -94,7 +97,7 @@ describe("constraint requirements", () => {
     const twice = mergingConstraintRequirements(
       bare(),
       once,
-      requiringAncestorSlotName(bare(), { tokenName: undefined, name: "third", helperName: "whenParentNamed" }),
+      requiringAncestorSlotName(bare(), { token: undefined, name: "third", helperName: "whenParentNamed" }),
     );
 
     expect(constraintRequirementsOf(twice).map((requirement) => requirement.name)).toEqual([

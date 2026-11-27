@@ -13,18 +13,14 @@ Advanced constraints are exported from the root `@codefast/di`, and also from th
 `@codefast/di/resolution/select/constraints`, which points at the same module. The examples in this section import from
 the root — the shorter path, and always correct.
 
-## Token name resolution
+## Token identity
 
-> **Normative.** Every constraint function takes a `Token<unknown> | Constructor` and resolves it to a `tokenName`
-> string, which is compared against `ResolutionFrame.tokenName`:
->
-> - `Token<Value>` → use `token.name` (the string given at `token("app:Logger")`)
-> - `Constructor` → use `Constructor.name` (the JavaScript class name)
+> **Normative.** Every constraint function takes a `Token<unknown> | Constructor` and compares it by identity against
+> `ResolutionFrame.token`, the token or class the frame resolves. The display name plays no part in the match.
 
-> **Unique names.** `ResolutionFrame.tokenName` is a `string`, not a branded type. If two different tokens share a
-> `name` — say `token<A>("app:Config")` and `token<B>("app:Config")` — a constraint cannot tell them apart. This is why
-> a display name is `<namespace>:<Name>` ([Display names](token.md#display-names)): two owners never mint the same name
-> by accident, so a false match can only come from one owner naming two tokens alike.
+> **Same name, different token.** `token<A>("app:Config")` and `token<B>("app:Config")` are two tokens, and a constraint
+> built from one never matches a frame resolving the other — the same rule cycle detection follows by keying on the
+> binding rather than its name.
 
 ## Type signatures
 
@@ -74,18 +70,18 @@ include `ctx.parent`.
 
 > **Normative — the canonical implementation table.**
 >
-> | Function                            | Logic                                                                                                      |
-> | ----------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-> | `whenParentIs(token)`               | `ctx.parent !== undefined && ctx.parent.tokenName === tokenNameOf(token)`                                  |
-> | `whenNoParentIs(token)`             | `ctx.parent === undefined \|\| ctx.parent.tokenName !== tokenNameOf(token)`                                |
-> | `whenAnyAncestorIs(token)`          | `ctx.ancestors.some(f => f.tokenName === tokenNameOf(token))`                                              |
-> | `whenNoAncestorIs(token)`           | `ctx.ancestors.every(f => f.tokenName !== tokenNameOf(token))`                                             |
-> | `whenParentNamed(token, name)`      | `ctx.parent !== undefined && ctx.parent.tokenName === tokenNameOf(token) && ctx.parent.slot.name === name` |
-> | `whenAnyAncestorNamed(token, name)` | `ctx.ancestors.some(f => f.tokenName === tokenNameOf(token) && f.slot.name === name)`                      |
-> | `whenParentTagged(criterion)`       | `ctx.parent !== undefined && ctx.parent.slot.tags.includes(criterion)`                                     |
-> | `whenAnyAncestorTagged(criterion)`  | `ctx.ancestors.some(f => f.slot.tags.includes(criterion))`                                                 |
-> | `whenParentTaggedAll(tags)`         | `ctx.parent !== undefined && tags.every(t => ctx.parent.slot.tags.includes(t))`                            |
-> | `whenAnyAncestorTaggedAll(tags)`    | `ctx.ancestors.some(f => tags.every(t => f.slot.tags.includes(t)))`                                        |
+> | Function                            | Logic                                                                                     |
+> | ----------------------------------- | ----------------------------------------------------------------------------------------- |
+> | `whenParentIs(token)`               | `ctx.parent !== undefined && ctx.parent.token === token`                                  |
+> | `whenNoParentIs(token)`             | `ctx.parent === undefined \|\| ctx.parent.token !== token`                                |
+> | `whenAnyAncestorIs(token)`          | `ctx.ancestors.some(f => f.token === token)`                                              |
+> | `whenNoAncestorIs(token)`           | `ctx.ancestors.every(f => f.token !== token)`                                             |
+> | `whenParentNamed(token, name)`      | `ctx.parent !== undefined && ctx.parent.token === token && ctx.parent.slot.name === name` |
+> | `whenAnyAncestorNamed(token, name)` | `ctx.ancestors.some(f => f.token === token && f.slot.name === name)`                      |
+> | `whenParentTagged(criterion)`       | `ctx.parent !== undefined && ctx.parent.slot.tags.includes(criterion)`                    |
+> | `whenAnyAncestorTagged(criterion)`  | `ctx.ancestors.some(f => f.slot.tags.includes(criterion))`                                |
+> | `whenParentTaggedAll(tags)`         | `ctx.parent !== undefined && tags.every(t => ctx.parent.slot.tags.includes(t))`           |
+> | `whenAnyAncestorTaggedAll(tags)`    | `ctx.ancestors.some(f => tags.every(t => f.slot.tags.includes(t)))`                       |
 
 > **The named variants read `slot.name`, not `currentResolveOptions`.** `whenParentNamed(Logger, "console")` asks "is
 > the parent a `Logger` binding declaring `whenNamed("console")`?" — not "was the parent resolved with the hint

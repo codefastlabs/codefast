@@ -126,7 +126,7 @@ container.bind(Logger).whenDefault().to(NoopLogger);
 // Custom predicate — uses ConstraintContext
 container
   .bind(Logger)
-  .when((ctx) => ctx.ancestors.some((f) => f.tokenName === "DebugModule"))
+  .when((ctx) => ctx.ancestors.some((f) => f.token === DebugModule))
   .to(VerboseLogger);
 
 // Combining a name with a custom predicate on one binding

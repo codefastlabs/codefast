@@ -16,7 +16,7 @@ const X = tag<number>("x");
 const REGION = tag<string>("region");
 const EXTRA = tag<number>("extra");
 const Y = tag<number>("y");
-import type { BindingIdentifier, ConstraintContext, ResolutionFrame } from "#core/types";
+import type { BindingIdentifier, ConstraintContext, DependencyKey, ResolutionFrame } from "#core/types";
 import {
   whenAnyAncestorIs,
   whenAnyAncestorNamed,
@@ -30,9 +30,12 @@ import {
   whenParentTaggedAll,
 } from "#resolution/select/constraints";
 
-function frame(tokenName: string, slot: Partial<BindingSlot> = {}): ResolutionFrame {
+// A string mints a token of its own, so it never matches a constraint built from another token of that name.
+function frame(key: DependencyKey | string, slot: Partial<BindingSlot> = {}): ResolutionFrame {
+  const frameToken = typeof key === "string" ? token<unknown>(key) : key;
   return {
-    tokenName,
+    token: frameToken,
+    tokenName: frameToken.name,
     scope: "transient",
     bindingId: 1 as BindingIdentifier,
     kind: "dynamic",
@@ -55,24 +58,32 @@ const ROOT_CONTEXT = contextWith([]);
 describe("parent predicates", () => {
   const serviceToken = token<number>("service");
 
-  it("whenParentIs matches only the direct parent's token name", () => {
+  it("whenParentIs matches only the direct parent's token", () => {
     const predicate = whenParentIs(serviceToken);
-    expect(predicate(contextWith([frame("other"), frame("service")]))).toBe(true);
-    expect(predicate(contextWith([frame("service"), frame("other")]))).toBe(false);
+    expect(predicate(contextWith([frame("other"), frame(serviceToken)]))).toBe(true);
+    expect(predicate(contextWith([frame(serviceToken), frame("other")]))).toBe(false);
     expect(predicate(ROOT_CONTEXT)).toBe(false);
+  });
+
+  it("whenParentIs and whenNoParentIs tell apart two tokens sharing a display name", () => {
+    expect(whenParentIs(serviceToken)(contextWith([frame("service")]))).toBe(false);
+    expect(whenNoParentIs(serviceToken)(contextWith([frame("service")]))).toBe(true);
   });
 
   it("whenNoParentIs is the negation, including at the root", () => {
     const predicate = whenNoParentIs(serviceToken);
-    expect(predicate(contextWith([frame("service")]))).toBe(false);
+    expect(predicate(contextWith([frame(serviceToken)]))).toBe(false);
     expect(predicate(contextWith([frame("other")]))).toBe(true);
     expect(predicate(ROOT_CONTEXT)).toBe(true);
   });
 
   it("whenParentNamed matches the parent binding's token and slot name together", () => {
-    const predicate = whenParentNamed(token<number>("svc"), "primary");
-    expect(predicate(contextWith([frame("svc", { name: "primary" })]))).toBe(true);
-    expect(predicate(contextWith([frame("svc", { name: "secondary" })]))).toBe(false);
+    const svcToken = token<number>("svc");
+    const predicate = whenParentNamed(svcToken, "primary");
+    expect(predicate(contextWith([frame(svcToken, { name: "primary" })]))).toBe(true);
+    expect(predicate(contextWith([frame(svcToken, { name: "secondary" })]))).toBe(false);
+    // Another token of the same display name is another slot.
+    expect(predicate(contextWith([frame("svc", { name: "primary" })]))).toBe(false);
     // The same name on another token is another slot.
     expect(predicate(contextWith([frame("other", { name: "primary" })]))).toBe(false);
     expect(predicate(ROOT_CONTEXT)).toBe(false);
@@ -81,7 +92,7 @@ describe("parent predicates", () => {
   it("whenParentNamed takes a class as the parent token", () => {
     class Svc {}
     const predicate = whenParentNamed(Svc, "primary");
-    expect(predicate(contextWith([frame("Svc", { name: "primary" })]))).toBe(true);
+    expect(predicate(contextWith([frame(Svc, { name: "primary" })]))).toBe(true);
     expect(predicate(contextWith([frame("svc", { name: "primary" })]))).toBe(false);
   });
 
@@ -109,11 +120,14 @@ describe("parent predicates", () => {
 
 describe("ancestor predicates", () => {
   const rootToken = token<number>("root");
-  const deepStack = [frame("root", { name: "app", tags: [ENV.of("prod")] }), frame("mid"), frame("leafParent")];
+  const deepStack = [frame(rootToken, { name: "app", tags: [ENV.of("prod")] }), frame("mid"), frame("leafParent")];
 
   it("whenAnyAncestorIs scans the whole stack; whenNoAncestorIs negates it", () => {
     expect(whenAnyAncestorIs(rootToken)(contextWith(deepStack))).toBe(true);
     expect(whenNoAncestorIs(rootToken)(contextWith(deepStack))).toBe(false);
+    // An ancestor of the same display name is not the token asked for.
+    expect(whenAnyAncestorIs(rootToken)(contextWith([frame("root")]))).toBe(false);
+    expect(whenAnyAncestorNamed(rootToken, "app")(contextWith([frame("root", { name: "app" })]))).toBe(false);
     expect(whenAnyAncestorIs(rootToken)(contextWith([frame("mid")]))).toBe(false);
     expect(whenNoAncestorIs(rootToken)(ROOT_CONTEXT)).toBe(true);
   });
@@ -214,5 +228,21 @@ describe("predicates gate binding selection end-to-end", () => {
       .singleton();
 
     expect(container.resolve(loggerToken).source).toBe("new");
+  });
+});
+
+describe("token identity through the container", () => {
+  it("never lets a token match a frame resolving another token of the same display name", () => {
+    const first = token<string>("constraints:Same");
+    const second = token<string>("constraints:Same");
+    const leaf = token<string>("constraints:Leaf");
+    const container = Container.create();
+    container.bind(leaf).toConstantValue("default");
+    container.bind(leaf).when(whenParentIs(first)).toConstantValue("first");
+    container.bind(first).toResolved((value: string) => value, [leaf]);
+    container.bind(second).toResolved((value: string) => value, [leaf]);
+
+    expect(container.resolve(first)).toBe("first");
+    expect(container.resolve(second)).toBe("default");
   });
 });

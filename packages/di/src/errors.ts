@@ -307,7 +307,8 @@ export class UnreachableConstraintError extends DiError {
   readonly helperName: string;
 
   constructor(tokenName: string, requirement: ConstraintRequirement) {
-    const { name, helperName, tokenName: requiredTokenName } = requirement;
+    const { name, helperName } = requirement;
+    const requiredTokenName = requirement.token === undefined ? undefined : requirement.token.name;
     const scope = requiredTokenName === undefined ? "no binding" : `no binding for '${requiredTokenName}'`;
     const target = requiredTokenName === undefined ? "the binding it should match" : `a '${requiredTokenName}' binding`;
     super(

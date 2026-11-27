@@ -26,9 +26,9 @@ export const Tokens = {
 
 ## Display names
 
-The string a `token()`, `tag()` or module factory takes is its **display name**: what diagnostics print, what
-`ResolutionFrame.tokenName` carries, and what the `when*Is` / `when*Named` constraints compare. It is not the thing's
-identity — the object is — so two declarations may share one, and nothing but this rule stops them.
+The string a `token()`, `tag()` or module factory takes is its **display name**: what diagnostics print and what
+`ResolutionFrame.tokenName` carries. It is not the thing's identity — the object is, and the `when*Is` / `when*Named`
+constraints compare that — so two declarations may share one, and nothing but this rule stops them.
 
 > **Normative — a display name is spelled like the TS symbol it stands for, under its owner's namespace:
 > `<namespace>:<Name>`.**
@@ -47,7 +47,7 @@ identity — the object is — so two declarations may share one, and nothing bu
 > there is scoped by its file and meets no other author's.
 
 What it buys: a diagnostic that says `No binding for 'shop:Logger'` names one owner; two features that each declare a
-`Clock` cannot produce a `whenParentIs` false match; a reader tells a token from a tag key from a module by its shape;
+`Clock` stay apart in every message that names them; a reader tells a token from a tag key from a module by its shape;
 and a doc sample carries the shape a real app needs.
 
 ## Type signature

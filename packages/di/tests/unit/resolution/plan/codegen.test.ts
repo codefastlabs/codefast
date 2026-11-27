@@ -30,8 +30,12 @@ class Root {
 const leaf: ConstructorInvocation = Leaf;
 const root: ConstructorInvocation = Root;
 
-function generated(node: PlanNode): () => unknown {
-  const plan = generatePlan(node);
+const reportCycle = (): never => {
+  throw new Error("cycle");
+};
+
+function generated(node: PlanNode, rootBinding = registeredBinding("test:Root").binding): () => unknown {
+  const plan = generatePlan(node, rootBinding, reportCycle);
   if (plan === null) {
     throw new Error("this runtime refused to generate a plan");
   }
@@ -39,7 +43,7 @@ function generated(node: PlanNode): () => unknown {
 }
 
 function generatedAsync(node: AsyncPlanNode): () => unknown {
-  const plan = generateAsyncPlan(node);
+  const plan = generateAsyncPlan(node, registeredBinding("test:Root").binding, reportCycle);
   if (plan === null) {
     throw new Error("this runtime refused to generate an async plan");
   }
@@ -325,5 +329,31 @@ describe("generateAsyncPlan", () => {
 
     expect(((await plan()) as Leaf).tag).toEqual(["cached", "tag"]);
     expect(escapes).toBe(1);
+  });
+});
+
+describe("the generated root guard", () => {
+  it("holds the root in flight while the plan runs, reports a re-entry, and releases the flag", () => {
+    const rootBinding = registeredBinding("test:Root").binding;
+    let seenInFlight = false;
+    let reenter: (() => unknown) | undefined;
+    const plan = generated(
+      {
+        kind: "thunk",
+        run: () => {
+          seenInFlight = rootBinding.inFlight;
+          return reenter?.();
+        },
+      },
+      rootBinding,
+    );
+
+    plan();
+    expect(seenInFlight).toBe(true);
+    expect(rootBinding.inFlight).toBe(false);
+
+    reenter = plan;
+    expect(plan).toThrow("cycle");
+    expect(rootBinding.inFlight).toBe(false);
   });
 });

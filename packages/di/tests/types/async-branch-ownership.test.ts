@@ -8,6 +8,7 @@
 import { describe, expect, expectTypeOf, it } from "vitest";
 
 import { NO_TAG_KEYS } from "#core/tag";
+import { token } from "#core/token";
 import type { BindingIdentifier, ResolutionFrame } from "#core/types";
 import type { ResolutionDiagnostics } from "#introspection/diagnostics";
 import type { BranchDepth, OwnedBranchDepth, OwnedBranchStack } from "#resolution/path";
@@ -15,6 +16,7 @@ import { branchDepthOf, extendResolutionBranch, ROOT_BRANCH } from "#resolution/
 
 function frameOf(name: string, id: number): ResolutionFrame {
   return {
+    token: token<unknown>(name),
     tokenName: name,
     scope: "transient",
     bindingId: id as BindingIdentifier,

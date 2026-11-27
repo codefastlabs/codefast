@@ -100,7 +100,7 @@ function validateConstraintRequirements(
   constrained: ReadonlyArray<Binding>,
   registries: ReadonlyArray<BindingRegistry>,
 ): void {
-  let declaredSlotNames: Map<string, Set<string>> | undefined;
+  let declaredSlotNames: Map<DependencyKey, Set<string>> | undefined;
 
   for (const binding of constrained) {
     const { predicate } = binding;
@@ -121,13 +121,13 @@ function validateConstraintRequirements(
 }
 
 /** Every slot name declared anywhere a resolve through this container could reach, by declaring token. */
-function slotNamesInChain(registries: ReadonlyArray<BindingRegistry>): Map<string, Set<string>> {
-  const names = new Map<string, Set<string>>();
+function slotNamesInChain(registries: ReadonlyArray<BindingRegistry>): Map<DependencyKey, Set<string>> {
+  const names = new Map<DependencyKey, Set<string>>();
   for (const registry of registries) {
     for (const binding of registry.allBindings()) {
       const name = binding.slot.name;
       if (name !== undefined) {
-        getOrInsertComputed(names, tokenName(binding.token), newSlotNameSet).add(name);
+        getOrInsertComputed(names, binding.token, newSlotNameSet).add(name);
       }
     }
   }
@@ -139,11 +139,11 @@ const newSlotNameSet = (): Set<string> => new Set<string>();
 
 /** Whether a requirement's name is declared — on its token when it names one, on any token otherwise. */
 function isSlotNameDeclared(
-  declared: ReadonlyMap<string, ReadonlySet<string>>,
+  declared: ReadonlyMap<DependencyKey, ReadonlySet<string>>,
   requirement: ConstraintRequirement,
 ): boolean {
-  if (requirement.tokenName !== undefined) {
-    return declared.get(requirement.tokenName)?.has(requirement.name) ?? false;
+  if (requirement.token !== undefined) {
+    return declared.get(requirement.token)?.has(requirement.name) ?? false;
   }
   for (const names of declared.values()) {
     if (names.has(requirement.name)) {

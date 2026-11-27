@@ -1,5 +1,5 @@
 /** What a constraint needs to exist before it can ever match, so `validate()` can check for it. */
-import type { BindingConstraint } from "#core/types";
+import type { BindingConstraint, DependencyKey } from "#core/types";
 
 /**
  * Key the requirement is attached under.
@@ -23,7 +23,7 @@ export const CONSTRAINT_REQUIREMENT: unique symbol = Symbol("di:constraint-requi
 export interface ConstraintRequirement {
   readonly requires: "ancestorSlotName";
   /** The token whose slot must carry the name, or `undefined` when the spelling named no token. */
-  readonly tokenName: string | undefined;
+  readonly token: DependencyKey | undefined;
   readonly name: string;
   /** The helper that built the predicate, so a report can name what the caller wrote. */
   readonly helperName: string;

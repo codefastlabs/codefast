@@ -445,3 +445,82 @@ describe("a factory that resolves its own token from its synchronous prefix runs
     expect(runs()).toBe(1);
   });
 });
+
+describe("a constructor that resolves back through the container reports a cycle on the compiled plan lane", () => {
+  // Enough resolves that the root is served by its compiled plan rather than interpreted.
+  const WARM_RESOLVES = 4;
+
+  function bindReentrant(): { container: Container; Reentrant: new () => object; reenter: (on: boolean) => void } {
+    const container = Container.create();
+    let reentering = false;
+    class Reentrant {
+      readonly nested: unknown;
+
+      constructor() {
+        this.nested = reentering ? container.resolve(Reentrant) : undefined;
+      }
+    }
+    container.bind(Reentrant).toSelf();
+    return {
+      container,
+      Reentrant,
+      reenter: (on) => {
+        reentering = on;
+      },
+    };
+  }
+
+  it("on the sync lane, on every resolve, and releases the flag afterwards", () => {
+    const { container, Reentrant, reenter } = bindReentrant();
+    for (let attempt = 0; attempt < WARM_RESOLVES; attempt += 1) {
+      container.resolve(Reentrant);
+    }
+    reenter(true);
+    for (let attempt = 0; attempt < WARM_RESOLVES; attempt += 1) {
+      expect(() => container.resolve(Reentrant)).toThrow(CircularDependencyError);
+    }
+    reenter(false);
+    expect(container.resolve(Reentrant)).toBeInstanceOf(Reentrant);
+  });
+
+  it("through a dependency whose constructor resolves the root", () => {
+    const container = Container.create();
+    let reentering = false;
+    class Leaf {
+      constructor() {
+        if (reentering) {
+          container.resolve(Root);
+        }
+      }
+    }
+    class Root {
+      constructor(readonly leaf: Leaf) {}
+    }
+    container.bind(Leaf).toSelf();
+    container.bind(Root).toResolved((leaf: Leaf) => new Root(leaf), [Leaf]);
+    for (let attempt = 0; attempt < WARM_RESOLVES; attempt += 1) {
+      container.resolve(Root);
+    }
+    reentering = true;
+    expect(() => container.resolve(Root)).toThrow(CircularDependencyError);
+  });
+
+  it("on the async root lane", async () => {
+    const container = Container.create();
+    let reentering = false;
+    class Reentrant {
+      readonly nested: Promise<unknown> | undefined;
+
+      constructor() {
+        this.nested = reentering ? container.resolveAsync(Reentrant) : undefined;
+      }
+    }
+    container.bind(Reentrant).toSelf();
+    for (let attempt = 0; attempt < WARM_RESOLVES; attempt += 1) {
+      await container.resolveAsync(Reentrant);
+    }
+    reentering = true;
+    const outer = await container.resolveAsync(Reentrant);
+    await expect(outer.nested).rejects.toThrow(CircularDependencyError);
+  });
+});

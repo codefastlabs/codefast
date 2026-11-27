@@ -23,6 +23,7 @@ interface LinkedFrame extends ResolutionFrame {
  */
 export function buildResolutionFrame(binding: Binding, tokenName: string): ResolutionFrame {
   const frame: LinkedFrame = {
+    token: binding.token,
     tokenName,
     scope: binding.scope,
     bindingId: binding.identifier,
