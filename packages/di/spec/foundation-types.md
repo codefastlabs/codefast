@@ -164,11 +164,12 @@ binding asked for it, and every binding above that. A `when()` predicate reads i
 | `ancestors`             | Every frame above `parent`, root first                                                                    |
 | `currentResolveOptions` | The hint passed into the current resolve, `undefined` if there is none                                    |
 
-**A `ResolutionFrame`** holds: `tokenName` (for display in error messages), `scope`, `bindingId`, `kind`, and the
-**`slot`** of the binding matched for that frame. A slot is the binding's criterion set: `tags` (every criterion, the
-reserved name criterion included) plus `name`, the derived view of the reserved criterion (`undefined` if the binding
-declares no `whenNamed()`), and `keyMask`, a bitmask of the tag keys present that lets a constraint rule out a frame
-without walking its tags — see [Slots and last-wins](binding.md#slots-and-last-wins--the-exact-definition).
+**A `ResolutionFrame`** holds: `token` (the token or class it resolves, which constraints compare by identity),
+`tokenName` (for display in error messages), `scope`, `bindingId`, `kind`, and the **`slot`** of the binding matched for
+that frame. A slot is the binding's criterion set: `tags` (every criterion, the reserved name criterion included) plus
+`name`, the derived view of the reserved criterion (`undefined` if the binding declares no `whenNamed()`), and
+`keyMask`, a bitmask of the tag keys present that lets a constraint rule out a frame without walking its tags — see
+[Slots and last-wins](binding.md#slots-and-last-wins--the-exact-definition).
 
 A custom constraint reads `keyMask` with the helpers the built-in ones use, all exported from the package root:
 `tagKeyMaskOf(tags)` is the mask of a list of criteria, `coversTagKeys(mask, wanted)` is whether a mask holds every key

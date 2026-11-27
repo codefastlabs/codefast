@@ -298,7 +298,7 @@ property, so a user's handler is still checked strictly.
 ### The memoised `frame` and scope refinement
 
 A binding memoises a `frame` — the record a resolution path and a `when()` predicate see for it. `frame` derives from
-the token name, id, kind, slot **and scope**.
+the token, its name, id, kind, slot **and scope**.
 
 A binding carries a second memo, its `activationStamp`: whether it needs the activation pipeline, stamped with the
 lifecycle and registry versions it was computed under, doubled, plus the answer. A mutation anywhere moves the version

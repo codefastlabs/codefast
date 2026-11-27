@@ -78,6 +78,7 @@ function buildChain(
 
 function frameOf(name: string, id: number): ResolutionFrame {
   return {
+    token: token<unknown>(name),
     tokenName: name,
     scope: "transient",
     bindingId: id as BindingIdentifier,

@@ -93,6 +93,8 @@ export interface ResolveOptions<Names extends string = string> {
  * @since 0.3.16-canary.0
  */
 export interface ResolutionFrame {
+  /** The token or class this frame resolves — what a constraint compares, since display names may repeat. */
+  readonly token: DependencyKey;
   readonly tokenName: string;
   readonly scope: BindingScope;
   readonly bindingId: BindingIdentifier;
