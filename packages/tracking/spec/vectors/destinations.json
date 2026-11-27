@@ -176,6 +176,24 @@
         "limitedDataUse": true,
         "transmissionAllowed": true
       }
+    },
+    {
+      "id": "destinations.ad-transmission.ldu-needs-analytics",
+      "source": "V6",
+      "summary": "LDU substitutes for ads only on the measurement purpose: with both denied, nothing transmits",
+      "kind": "pure",
+      "operation": "toAdConsentState",
+      "input": {
+        "decision": {
+          "ads": false,
+          "analytics": false
+        },
+        "isLimitedDataUseAllowed": true
+      },
+      "expect": {
+        "limitedDataUse": true,
+        "transmissionAllowed": false
+      }
     }
   ]
 }

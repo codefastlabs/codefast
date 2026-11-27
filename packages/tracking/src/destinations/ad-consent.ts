@@ -11,7 +11,10 @@ import type { ConsentDecision } from "#core/consent";
 export interface AdConsentState {
   /** `ads` denied → the platform must restrict to Limited Data Use (Meta/TikTok LDU, UET `ad_storage` denied). */
   limitedDataUse: boolean;
-  /** `ads` granted, or `analytics` granted where Limited Data Use substitutes for `ads` — else send nothing. */
+  /**
+   * `ads` granted, or — where Limited Data Use substitutes for `ads` — `analytics` granted, since LDU leaves only
+   * restricted measurement processing and that is the purpose the visitor must still allow. Else send nothing.
+   */
   transmissionAllowed: boolean;
 }
 

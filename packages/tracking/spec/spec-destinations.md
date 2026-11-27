@@ -134,13 +134,16 @@ Unlike GA4's unified Consent Mode object, other platforms expose per-vendor shap
 **Transmission.** An ad destination transmits only when `ads` is granted. The one exception is an opt-out regime (a US
 "do not sell or share" opt-out, `ads = false` via GPC/GPP), where delivery under Limited Data Use substitutes for the
 `ads` grant: there, `analytics` granted is enough, and the event carries LDU on Meta/TikTok and `ad_storage: denied` on
-UET. The integrator enables that substitution per evaluation (wired to the resolved mode being `opt-out`); under opt-in
-it MUST stay off, because LDU is a CCPA mechanism and does not stand in for consent — an ad platform without `ads`
-consent receives nothing. Either way the opt-out MUST NOT withdraw first-party `analytics` (spec-consent §3). What
-breaks if consent is wrong is legal (EEA users excluded from ad audiences; unlawful pre-consent hits) and often silent
-(a left-on `revoke` withholds everything; LDU without an IP does nothing) — so these mappings are normative, not
-advisory. For programmatic ad serving in the EEA/UK/CH the platform decision comes from a CMP, not this native mapping —
-see [spec-ad-consent-frameworks](spec-ad-consent-frameworks.md).
+UET. Requiring `analytics` is this specification's policy, not a platform rule: LDU reduces the delivery to restricted
+measurement processing, so it rests on the measurement purpose, and a visitor who denied both `ads` and `analytics` has
+refused every purpose the delivery could serve — the ad platform receives nothing. The integrator enables that
+substitution per evaluation (wired to the resolved mode being `opt-out`); under opt-in it MUST stay off, because LDU is
+a CCPA mechanism and does not stand in for consent — an ad platform without `ads` consent receives nothing. Either way
+the opt-out MUST NOT withdraw first-party `analytics` (spec-consent §3). What breaks if consent is wrong is legal (EEA
+users excluded from ad audiences; unlawful pre-consent hits) and often silent (a left-on `revoke` withholds everything;
+LDU without an IP does nothing) — so these mappings are normative, not advisory. For programmatic ad serving in the
+EEA/UK/CH the platform decision comes from a CMP, not this native mapping — see
+[spec-ad-consent-frameworks](spec-ad-consent-frameworks.md).
 
 ## 6. Reference destination: cookieless counter (Vercel Analytics shape)
 
@@ -169,7 +172,8 @@ nothing sent.
 domain variants) and leaves `_gcl_au` untouched.
 
 **V6 — ad transmission.** `{ads:false, analytics:true}` with LDU substitution off → no transmission (LDU on); with it on
-→ transmits under LDU. `{ads:true, analytics:false}` → transmits, LDU off.
+→ transmits under LDU. `{ads:false, analytics:false}` with it on → no transmission. `{ads:true, analytics:false}` →
+transmits, LDU off.
 
 ## License
 
