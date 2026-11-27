@@ -475,7 +475,7 @@ export class DependencyResolver implements ResolverCallbacks {
       if ((binding.kind === "class" || binding.kind === "resolved") && resolutionStack.length === 0) {
         const plan = this.#getInstantiationPlan(binding);
         if (plan !== null) {
-          return runRootPlan(binding, plan, resolutionStack);
+          return plan();
         }
       }
     } else if (scope === "singleton") {
@@ -1913,7 +1913,7 @@ export class DependencyResolver implements ResolverCallbacks {
       return null;
     }
     try {
-      const planned = runRootPlan(fastBinding, plan, EMPTY_FRAME_LIST);
+      const planned = plan();
       return planned instanceof Promise ? planned : Promise.resolve(planned);
     } catch (planError) {
       // The interpreted lane is async, so a sync throw is a rejection there too.
@@ -2044,24 +2044,6 @@ function anyPredicate(bindings: ReadonlyArray<Binding>): boolean {
     }
   }
   return false;
-}
-
-/**
- * Runs a root plan with its binding flagged in flight for the plan's synchronous run.
- *
- * @remarks A plan pushes no frame, so a constructor that resolves back through the container meets an empty stack and
- * would take the plan lane again; the flag reports that re-entry as the cycle it is, as the interpreted lanes do.
- */
-function runRootPlan(binding: Binding, plan: () => unknown, resolutionStack: ReadonlyArray<ResolutionFrame>): unknown {
-  if (binding.inFlight) {
-    throw new CircularDependencyError(cycleNamesOf(resolutionStack, tokenName(binding.token)));
-  }
-  binding.inFlight = true;
-  try {
-    return plan();
-  } finally {
-    binding.inFlight = false;
-  }
 }
 
 /**

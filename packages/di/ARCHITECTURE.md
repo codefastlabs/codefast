@@ -726,11 +726,12 @@ A **resolution path** is the chain of ancestors a level is being resolved under 
 C". A cycle is a binding that appears on its own path. How membership in that path is checked depends on one structural
 fact: whether the code producing the path runs on one synchronous call stack.
 
-| Lane                      | Mechanism                                                            | Why                                                                                                               |
-| ------------------------- | -------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| Every synchronous lane    | `binding.inFlight`, set on entering the level and cleared on leaving | Synchronous code does not interleave, so the flag _is_ exact path membership — `O(1)` at any depth, no side table |
-| Async, a factory's prefix | `binding.inFlight`, held for the factory's synchronous prefix        | The request that closes a cycle comes from that prefix, and synchronous code does not interleave                  |
-| Async, on a branch        | `extendResolutionBranch` — append-only path, scanned by branch depth | A continuation's ancestors are on no call stack and several branches interleave, so a flag cannot name the branch |
+| Lane                      | Mechanism                                                                       | Why                                                                                                                                                                               |
+| ------------------------- | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Every synchronous lane    | `binding.inFlight`, set on entering the level and cleared on leaving            | Synchronous code does not interleave, so the flag _is_ exact path membership — `O(1)` at any depth, no side table                                                                 |
+| Async, a factory's prefix | `binding.inFlight`, held for the factory's synchronous prefix                   | The request that closes a cycle comes from that prefix, and synchronous code does not interleave                                                                                  |
+| A compiled root plan      | `binding.inFlight` on the root, held by the plan itself for its synchronous run | A plan pushes no frame, so a constructor resolving its root back meets an empty stack; the guard lives inside the plan (both tiers) so the resolver's plan lane stays a bare call |
+| Async, on a branch        | `extendResolutionBranch` — append-only path, scanned by branch depth            | A continuation's ancestors are on no call stack and several branches interleave, so a flag cannot name the branch                                                                 |
 
 `enterSyncPath` / `leaveSyncPath` in `resolution/path.ts` are the whole synchronous mechanism: check the flag, set it,
 push the frame; pop, clear. The stack is still kept — it is what names the path in an error and what a constraint

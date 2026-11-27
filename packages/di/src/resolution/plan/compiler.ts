@@ -12,12 +12,12 @@ import type { ConstructorInvocation } from "#core/constructor-type";
 import type { Token } from "#core/token";
 import { tokenName } from "#core/token";
 import type { Constructor, ResolutionFrame, ResolveOptions } from "#core/types";
-import { AsyncResolutionError } from "#errors";
+import { AsyncResolutionError, CircularDependencyError } from "#errors";
 import type { DependencySlot } from "#injection/dependency-slot";
 import { injectionSlotToResolveOptions } from "#injection/dependency-slot";
 import type { ConstructorMetadata } from "#metadata/types";
 import { settleInOrder } from "#resolution/async-fan-out";
-import { enterSeededPath, leaveSeededPath } from "#resolution/path";
+import { cycleNamesOf, enterSeededPath, leaveSeededPath } from "#resolution/path";
 import type { AsyncPlanNode, PlanNode } from "#resolution/plan/codegen";
 import {
   generateAsyncPlan,
@@ -216,11 +216,41 @@ export class InstantiationPlanCompiler {
       return compiled;
     }
     const host = this.#host;
-    return this.#tiered(
+    return this.#tieredRoot(
+      binding,
       compiled.run,
-      () => generatePlan(compiled.node),
+      (reportCycle) => generatePlan(compiled.node, binding, reportCycle),
       (current, next) => host.replacePlan(binding, current, next),
     );
+  }
+
+  /**
+   * Tiers a root plan with its binding held in flight for the plan's synchronous run, in both tiers.
+   *
+   * @remarks A plan pushes no frame, so a constructor that resolves back through the container would take the plan
+   * lane again; the flag reports that re-entry as the cycle it is, as the interpreted lanes do.
+   */
+  #tieredRoot(
+    binding: Binding,
+    closure: () => unknown,
+    generate: (reportCycle: () => never) => (() => unknown) | null,
+    replace: (current: () => unknown, next: () => unknown) => void,
+  ): () => unknown {
+    const reportCycle = (): never => {
+      throw new CircularDependencyError(cycleNamesOf([], tokenName(binding.token)));
+    };
+    const guarded = (): unknown => {
+      if (binding.inFlight) {
+        reportCycle();
+      }
+      binding.inFlight = true;
+      try {
+        return closure();
+      } finally {
+        binding.inFlight = false;
+      }
+    };
+    return this.#tiered(guarded, () => generate(reportCycle), replace);
   }
 
   /**
@@ -642,9 +672,10 @@ export class InstantiationPlanCompiler {
       return node;
     }
     const host = this.#host;
-    return this.#tiered(
+    return this.#tieredRoot(
+      binding,
       node.run,
-      () => generateAsyncPlan(node.node),
+      (reportCycle) => generateAsyncPlan(node.node, binding, reportCycle),
       (current, next) => host.replaceAsyncPlan(binding, current, next),
     );
   }

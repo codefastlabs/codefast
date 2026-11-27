@@ -103,12 +103,12 @@ export function isPlanCodegenAvailable(): boolean {
  *
  * @since 0.10.0
  */
-export function generatePlan(node: PlanNode): (() => unknown) | null {
+export function generatePlan(node: PlanNode, root: Binding, reportCycle: () => never): (() => unknown) | null {
   if (!isPlanCodegenAvailable()) {
     return null;
   }
   const emitter = new PlanEmitter();
-  return compileRendered(emitter, emitter.expression(node));
+  return compileRendered(emitter, emitter.expression(node), root, reportCycle);
 }
 
 /**
@@ -116,18 +116,31 @@ export function generatePlan(node: PlanNode): (() => unknown) | null {
  *
  * @since 0.10.0
  */
-export function generateAsyncPlan(node: AsyncPlanNode): (() => unknown) | null {
+export function generateAsyncPlan(
+  node: AsyncPlanNode,
+  root: Binding,
+  reportCycle: () => never,
+): (() => unknown) | null {
   if (!isPlanCodegenAvailable()) {
     return null;
   }
   const emitter = new PlanEmitter();
-  return compileRendered(emitter, emitter.asyncExpression(node));
+  return compileRendered(emitter, emitter.asyncExpression(node), root, reportCycle);
 }
 
-function compileRendered(emitter: PlanEmitter, result: string): (() => unknown) | null {
+// The root's in-flight guard is emitted into the plan itself, so the resolver's plan lane stays a bare call.
+function compileRendered(
+  emitter: PlanEmitter,
+  result: string,
+  root: Binding,
+  reportCycle: () => never,
+): (() => unknown) | null {
   generatedCount += 1;
+  const flag = `${emitter.parameter(root, "R")}.inFlight`;
   const locals = emitter.locals.length === 0 ? "" : `let ${emitter.locals.join(", ")};`;
-  const body = `"use strict";/* plan ${String(generatedCount)} */${emitter.hoisted.join("")}return () => {${locals}${emitter.statements.join("")}return ${result};};`;
+  const run = `${locals}${emitter.statements.join("")}return ${result};`;
+  const guarded = `if(${flag}){${emitter.parameter(reportCycle, "C")}();}${flag}=true;try{${run}}finally{${flag}=false;}`;
+  const body = `"use strict";/* plan ${String(generatedCount)} */${emitter.hoisted.join("")}return () => {${guarded}};`;
   try {
     // Compiling from source is the mechanism: one function literal per plan is what gives it its own feedback.
     // oxlint-disable-next-line typescript/no-implied-eval
@@ -276,6 +289,11 @@ class PlanEmitter {
     const local = this.#define(`${this.#slot(binding, "B")}.instance`);
     this.#statement(`if (${local} === ${this.#slot(NO_INSTANCE, "N")}) ${local} = ${this.#slot(escape, "E")}();`);
     return local;
+  }
+
+  /** The parameter that carries `value` into the generated function. */
+  parameter(value: unknown, prefix: string): string {
+    return this.#slot(value, prefix);
   }
 
   // One parameter per distinct value, so a class constructed four times is one constructor with four sites.
