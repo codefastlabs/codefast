@@ -20,6 +20,8 @@ export interface AdConsentState {
 
 /**
  * Options for `toAdConsentState`.
+ *
+ * @since 0.11.0
  */
 export interface AdConsentStateOptions {
   /**
@@ -35,6 +37,8 @@ export interface AdConsentStateOptions {
 /**
  * Resolves the decision an ad destination maps for one event: the consent its gate admitted it under, or nothing
  * granted when the tracker has no gate, so an ungated ad sink always restricts to Limited Data Use.
+ *
+ * @since 0.11.0
  */
 export function resolveAdDecision(consent: ConsentDecision | undefined): ConsentDecision {
   return consent ?? { ads: false, analytics: false };
