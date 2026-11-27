@@ -39,11 +39,11 @@ A **Vector** is one of two kinds:
 
   ```jsonc
   {
-    "id": "tracker.gate-closed.exempt-only",
+    "id": "tracker.consent-denied.exempt-only",
     "source": "V2",
-    "summary": "Gate closed: only exempt destinations receive, identifier-free",
+    "summary": "Consent denied: only exempt destinations receive, identifier-free",
     "kind": "scenario",
-    "given": { "gate": "closed", "destinations": ["required:D_req", "exempt:D_ex"] },
+    "given": { "consent": { "ads": false, "analytics": false }, "destinations": ["required:D_req", "exempt:D_ex"] },
     "when": "track('signup', { plan: 'pro' })",
     "expect": { "received": { "D_ex": 1, "D_req": 0 }, "anonymousId": "", "anonymousIdCallableInvocations": 0 },
   }
