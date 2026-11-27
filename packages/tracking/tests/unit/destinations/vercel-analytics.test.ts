@@ -13,14 +13,17 @@ describe("createVercelAnalyticsDestination", () => {
     const { createVercelAnalyticsDestination } = await import("#destinations/vercel-analytics");
     const destination = createVercelAnalyticsDestination();
 
-    void destination.send({
-      anonymousId: "anon-1",
-      eventId: "e1",
-      name: "button_clicked",
-      properties: { count: 3, id: "cta", primary: true, url: null },
-      timestamp: 0,
-      type: "track",
-    });
+    void destination.send(
+      {
+        anonymousId: "anon-1",
+        eventId: "e1",
+        name: "button_clicked",
+        properties: { count: 3, id: "cta", primary: true, url: null },
+        timestamp: 0,
+        type: "track",
+      },
+      undefined,
+    );
 
     expect(track).toHaveBeenCalledWith("button_clicked", { count: 3, id: "cta", primary: true, url: null });
   });
@@ -29,14 +32,17 @@ describe("createVercelAnalyticsDestination", () => {
     const { createVercelAnalyticsDestination } = await import("#destinations/vercel-analytics");
     const destination = createVercelAnalyticsDestination();
 
-    void destination.send({
-      anonymousId: "anon-1",
-      eventId: "e2",
-      name: "order_completed",
-      properties: { items: ["a", "b"] },
-      timestamp: 0,
-      type: "track",
-    });
+    void destination.send(
+      {
+        anonymousId: "anon-1",
+        eventId: "e2",
+        name: "order_completed",
+        properties: { items: ["a", "b"] },
+        timestamp: 0,
+        type: "track",
+      },
+      undefined,
+    );
 
     expect(track).toHaveBeenCalledWith("order_completed", { items: '["a","b"]' });
   });
@@ -45,14 +51,17 @@ describe("createVercelAnalyticsDestination", () => {
     const { createVercelAnalyticsDestination } = await import("#destinations/vercel-analytics");
     const destination = createVercelAnalyticsDestination();
 
-    void destination.send({
-      anonymousId: "anon-1",
-      eventId: "e3",
-      name: "page_viewed",
-      properties: { referrer: undefined },
-      timestamp: 0,
-      type: "track",
-    });
+    void destination.send(
+      {
+        anonymousId: "anon-1",
+        eventId: "e3",
+        name: "page_viewed",
+        properties: { referrer: undefined },
+        timestamp: 0,
+        type: "track",
+      },
+      undefined,
+    );
 
     expect(track).toHaveBeenCalledWith("page_viewed", {});
   });

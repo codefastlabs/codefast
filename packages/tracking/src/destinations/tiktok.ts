@@ -1,12 +1,12 @@
 import type { ConsentDecision } from "#core/consent";
 import type { Destination } from "#core/destination";
-import { toAdConsentState } from "#destinations/ad-consent";
+import { resolveAdDecision, toAdConsentState } from "#destinations/ad-consent";
 import type { FlatPropertyValue } from "#destinations/shared";
 import { flattenEventProps } from "#destinations/shared";
 
 /**
  * TikTok consent. TikTok uses a **single Limited Data Use boolean**, not Meta's
- * `dataProcessingOptions` structure and no signal object (spec-destinations §5). Its
+ * `dataProcessingOptions` structure and no signal object. Its
  * transmission gate (`ttq.grantConsent()`/`revokeConsent()`) is the tracker's job, through the
  * destination's `isPermittedBy`; this models the `ads`-driven LDU lever.
  *
@@ -42,10 +42,8 @@ export interface TiktokEventPayload {
  * @since 0.5.0-canary.6
  */
 export interface TiktokDestinationOptions {
-  /** Erasure cookie-clear seam — TikTok exposes no per-visitor deletion API, so erasure is cookie-clear + stop-send (DSR-V4). */
+  /** Erasure cookie-clear seam — TikTok has no per-visitor deletion API, so erasure is cookie-clear and stop-send. */
   clearCookies?: (() => void) | undefined;
-  /** Read per event so an `ads` change flips LDU without recreating the destination. */
-  getDecision: () => ConsentDecision;
   /**
    * Whether delivering under Limited Data Use substitutes for an `ads` grant right now — wire
    * it to the resolved mode being `"opt-out"`. Read per event. Omit to withhold the
@@ -61,7 +59,7 @@ export interface TiktokDestinationOptions {
 }
 
 /**
- * Reference ad destination for TikTok: maps each event and the live `ads` decision to
+ * Reference ad destination for TikTok: maps each event and the consent it was admitted under to
  * TikTok's LDU boolean, then hands it to an injected transport. Consent-restriction mapping
  * only — the pixel id and `ttq` transport are the integrator's. `consentRequirement` stays
  * `"required"`.
@@ -81,13 +79,13 @@ export function createTiktokDestination(options: TiktokDestinationOptions): Dest
       stopped = true;
       options.clearCookies?.();
     },
-    async send(event) {
+    async send(event, consent) {
       if (stopped) {
         return;
       }
 
       await options.transport({
-        consent: toTiktokConsent(options.getDecision()),
+        consent: toTiktokConsent(resolveAdDecision(consent)),
         name: event.name,
         properties: flattenEventProps(event.properties),
       });

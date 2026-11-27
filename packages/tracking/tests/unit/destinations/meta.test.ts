@@ -30,11 +30,11 @@ describe("createMetaDestination", () => {
     type: "track",
   } as const;
 
-  it("maps the event and the live ads decision into the transport payload", async () => {
+  it("maps the event and its consent into the transport payload", async () => {
     const transport = vi.fn();
-    const destination = createMetaDestination({ getDecision: () => ({ ads: true, analytics: true }), transport });
+    const destination = createMetaDestination({ transport });
 
-    await destination.send(event);
+    await destination.send(event, { ads: true, analytics: true });
 
     expect(transport).toHaveBeenCalledWith({
       dataProcessingOptions: { country: 0, options: [], state: 0 },
@@ -44,22 +44,28 @@ describe("createMetaDestination", () => {
     });
   });
 
-  it("re-reads the decision per event so an ads withdrawal flips to LDU without recreating it", async () => {
+  it("maps the consent each event was admitted under, so an ads withdrawal flips to LDU", async () => {
     const transport = vi.fn();
-    let decision = { ads: true, analytics: true };
-    const destination = createMetaDestination({ getDecision: () => decision, transport });
+    const destination = createMetaDestination({ transport });
 
-    await destination.send(event);
-    decision = { ads: false, analytics: true };
-    await destination.send(event);
+    await destination.send(event, { ads: true, analytics: true });
+    await destination.send(event, { ads: false, analytics: true });
 
     expect(transport.mock.calls[0]?.[0].dataProcessingOptions.options).toEqual([]);
     expect(transport.mock.calls[1]?.[0].dataProcessingOptions.options).toEqual(["LDU"]);
   });
 
+  it("restricts to LDU when the tracker has no consent gate", async () => {
+    const transport = vi.fn();
+    const destination = createMetaDestination({ transport });
+
+    await destination.send(event, undefined);
+
+    expect(transport.mock.calls[0]?.[0].dataProcessingOptions.options).toEqual(["LDU"]);
+  });
+
   it("is consent-required — an ad sink is never exempt", () => {
     const destination = createMetaDestination({
-      getDecision: () => ({ ads: true, analytics: true }),
       transport: () => undefined,
     });
 
@@ -71,7 +77,6 @@ describe("createMetaDestination", () => {
     const clearCookies = vi.fn();
     const destination = createMetaDestination({
       clearCookies,
-      getDecision: () => ({ ads: true, analytics: true }),
       transport,
     });
 
@@ -81,7 +86,7 @@ describe("createMetaDestination", () => {
     // Erasure is cookie-clear + stop-send only — Meta has no per-visitor deletion API.
     expect(transport).not.toHaveBeenCalled();
 
-    await destination.send(event);
+    await destination.send(event, { ads: true, analytics: true });
 
     expect(transport).not.toHaveBeenCalled();
   });

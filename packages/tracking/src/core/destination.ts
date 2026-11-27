@@ -26,12 +26,16 @@ export interface Destination {
   isPermittedBy?: ((consent: ConsentDecision) => boolean) | undefined;
   name: string;
   /**
-   * Erase this destination's trace of the subject on withdrawal (spec-data-subject-rights
-   * §3): clear the destination's cookies and stop sending, and — where the platform offers
-   * one — request per-visitor deletion. Optional: a sink with nothing to erase omits it.
+   * Erase this destination's trace of the subject on withdrawal: clear the destination's cookies and stop sending, and
+   * — where the platform offers one — request per-visitor deletion. Optional: a sink with nothing to erase omits it.
    * Invoked at most once per withdrawal; the tracker swallows its failures.
    */
   onErasure?: ((id: string) => Promise<void> | void) | undefined;
-  /** Must always return a `Promise` — mark `send` `async` even if the body has no `await`. */
-  send: (event: TrackedEvent) => Promise<void>;
+  /**
+   * Delivers one event. Must always return a `Promise` — mark `send` `async` even if the body has no `await`.
+   *
+   * @param event - The event, its `anonymousId` empty when the destination receives it as exempt.
+   * @param consent - The effective consent the gate admitted the event under, or `undefined` when the tracker has none.
+   */
+  send: (event: TrackedEvent, consent: ConsentDecision | undefined) => Promise<void>;
 }

@@ -19,14 +19,13 @@ describe("toMicrosoftUetConsent", () => {
 });
 
 describe("createMicrosoftUetDestination", () => {
-  it("maps the event and the live ads decision into the transport payload", async () => {
+  it("maps the event and its consent into the transport payload", async () => {
     const transport = vi.fn();
     const destination = createMicrosoftUetDestination({
-      getDecision: () => ({ ads: false, analytics: true }),
       transport,
     });
 
-    await destination.send(event);
+    await destination.send(event, { ads: false, analytics: true });
 
     expect(transport).toHaveBeenCalledWith({
       consent: { ad_storage: "denied" },
@@ -40,12 +39,11 @@ describe("createMicrosoftUetDestination", () => {
     const clearCookies = vi.fn();
     const destination = createMicrosoftUetDestination({
       clearCookies,
-      getDecision: () => ({ ads: true, analytics: true }),
       transport,
     });
 
     await destination.onErasure?.("subject-1");
-    await destination.send(event);
+    await destination.send(event, { ads: true, analytics: true });
 
     expect(clearCookies).toHaveBeenCalledOnce();
     expect(transport).not.toHaveBeenCalled();

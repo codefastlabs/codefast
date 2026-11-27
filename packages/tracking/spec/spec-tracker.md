@@ -34,7 +34,8 @@ A client tracker is created from:
    - `anonymousId` for the exempt lane: the empty string.
 6. **Fan out.** Every permitted destination receives the identified envelope; every exempt destination the decision does
    not permit receives the identifier-free one (§3). Both share one `eventId`, so a downstream join can dedupe them;
-   every other destination receives nothing.
+   every other destination receives nothing. Each `send` also receives the decision read in step 3 — the one the gate
+   admitted the event under — or none when there is no `getConsent`.
 
 ## 3. The exempt lane
 

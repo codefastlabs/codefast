@@ -11,9 +11,11 @@ A destination is the tracker's only dependency for delivery — never a specific
 - `isPermittedBy(decision)` — whether the visitor's effective consent (spec-consent §7) permits this destination to
   receive identified envelopes. Optional; the default is `analytics` granted, the right purpose for a measurement sink.
   An advertising destination MUST declare its own (§5): it is gated on `ads`, never on `analytics` alone.
-- `send(envelope)` — accepts a `TrackEvent` (spec-event-model §3) and returns a deferred/awaitable result. Destinations
-  own their transport: queueing, batching, and unload delivery are the destination's (or its underlying tag's) job — the
-  tracker adds no queue in front.
+- `send(envelope, decision)` — accepts a `TrackEvent` (spec-event-model §3) and the effective decision the gate admitted
+  it under (absent when the tracker has no gate), and returns a deferred/awaitable result. A destination that restricts
+  what it sends by consent MUST derive the restriction from that decision, never from a second read of its own, so the
+  gate and the restriction can never disagree. Destinations own their transport: queueing, batching, and unload delivery
+  are the destination's (or its underlying tag's) job — the tracker adds no queue in front.
 
 `send` SHOULD never throw synchronously; the tracker contains both failure shapes regardless (spec-tracker §4).
 
@@ -137,12 +139,13 @@ Unlike GA4's unified Consent Mode object, other platforms expose per-vendor shap
 UET. Requiring `analytics` is this specification's policy, not a platform rule: LDU reduces the delivery to restricted
 measurement processing, so it rests on the measurement purpose, and a visitor who denied both `ads` and `analytics` has
 refused every purpose the delivery could serve — the ad platform receives nothing. The integrator enables that
-substitution per evaluation (wired to the resolved mode being `opt-out`); under opt-in it MUST stay off, because LDU is
-a CCPA mechanism and does not stand in for consent — an ad platform without `ads` consent receives nothing. Either way
-the opt-out MUST NOT withdraw first-party `analytics` (spec-consent §3). What breaks if consent is wrong is legal (EEA
-users excluded from ad audiences; unlawful pre-consent hits) and often silent (a left-on `revoke` withholds everything;
-LDU without an IP does nothing) — so these mappings are normative, not advisory. For programmatic ad serving in the
-EEA/UK/CH the platform decision comes from a CMP, not this native mapping — see
+substitution per evaluation (wired to the resolved mode being `opt-out`); LDU itself follows the decision `send`
+receives (§1), and with no decision the destination MUST apply it. Under opt-in the substitution MUST stay off, because
+LDU is a CCPA mechanism and does not stand in for consent — an ad platform without `ads` consent receives nothing.
+Either way the opt-out MUST NOT withdraw first-party `analytics` (spec-consent §3). What breaks if consent is wrong is
+legal (EEA users excluded from ad audiences; unlawful pre-consent hits) and often silent (a left-on `revoke` withholds
+everything; LDU without an IP does nothing) — so these mappings are normative, not advisory. For programmatic ad serving
+in the EEA/UK/CH the platform decision comes from a CMP, not this native mapping — see
 [spec-ad-consent-frameworks](spec-ad-consent-frameworks.md).
 
 ## 6. Reference destination: cookieless counter (Vercel Analytics shape)
@@ -173,7 +176,8 @@ domain variants) and leaves `_gcl_au` untouched.
 
 **V6 — ad transmission.** `{ads:false, analytics:true}` with LDU substitution off → no transmission (LDU on); with it on
 → transmits under LDU. `{ads:false, analytics:false}` with it on → no transmission. `{ads:true, analytics:false}` →
-transmits, LDU off.
+transmits, LDU off. LDU follows the decision `send` receives, so a stored `ads` grant overridden by GPC transmits (with
+the substitution on) under LDU; no decision → LDU on.
 
 ## License
 

@@ -14,6 +14,11 @@
   platform, and an ads grant reaches one even when analytics is denied.
 - Ad destinations take `isLimitedDataUseAllowed`. Wire it to the resolved mode being `"opt-out"` to keep sending under
   Limited Data Use when `ads` is denied, as a US opt-out allows. Leave it unset under opt-in.
+- `Destination.send` receives the consent the tracker's gate admitted the event under as its second argument. Ad
+  destinations derive Limited Data Use from it, so they no longer take `getDecision`: delete that option. With no
+  `getConsent` on the tracker, they send under Limited Data Use.
+- `useGoogleConsentSync` sends the effective consent to Consent Mode rather than the stored decision, so GPC keeps a
+  stored `ads` grant denied there too.
 - `createIsAnalyticsAllowed` (`client/is-analytics-allowed`) is replaced by `createEffectiveConsentReader`
   (`client/effective-consent-reader`), which returns the whole decision. `ConsentRuntime.isAnalyticsAllowed` becomes
   `getEffectiveConsent`, and you pass it to the tracker as `getConsent`.

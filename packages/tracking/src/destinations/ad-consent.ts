@@ -2,7 +2,7 @@ import type { ConsentDecision } from "#core/consent";
 
 /**
  * The normalized two-lever ad-platform consent state derived from one `{ ads, analytics }`
- * decision (spec-destinations §5): whether events transmit at all, and whether they carry
+ * decision: whether events transmit at all, and whether they carry
  * Limited Data Use. Every ad destination consumes this same shape so per-vendor mappings
  * cannot drift.
  *
@@ -30,6 +30,14 @@ export interface AdConsentStateOptions {
    * @defaultValue false
    */
   isLimitedDataUseAllowed?: boolean | undefined;
+}
+
+/**
+ * Resolves the decision an ad destination maps for one event: the consent its gate admitted it under, or nothing
+ * granted when the tracker has no gate, so an ungated ad sink always restricts to Limited Data Use.
+ */
+export function resolveAdDecision(consent: ConsentDecision | undefined): ConsentDecision {
+  return consent ?? { ads: false, analytics: false };
 }
 
 /**

@@ -1,13 +1,13 @@
 import type { ConsentDecision } from "#core/consent";
 import type { Destination } from "#core/destination";
-import { toAdConsentState } from "#destinations/ad-consent";
+import { resolveAdDecision, toAdConsentState } from "#destinations/ad-consent";
 import type { FlatPropertyValue } from "#destinations/shared";
 import { flattenEventProps } from "#destinations/shared";
 
 /**
  * Meta's `dataProcessingOptions` restriction. `['LDU'], 0, 0` turns on Limited Data Use and
  * lets Meta geolocate the user — the recommended default beyond California, where only
- * country `1` (USA) / state `1000` (California) are documented codes (spec-destinations §5).
+ * country `1` (USA) / state `1000` (California) are documented codes.
  * `[]` applies no restriction.
  *
  * @since 0.5.0-canary.6
@@ -48,12 +48,10 @@ export interface MetaEventPayload {
 export interface MetaDestinationOptions {
   /**
    * Erasure cookie-clear seam — invoked by `onErasure` to drop Meta's `_fbp`/`_fbc` cookies
-   * (spec-data-subject-rights DSR-V4). Meta exposes no per-visitor deletion API, so erasure
+   *. Meta exposes no per-visitor deletion API, so erasure
    * is cookie-clear + stop-send only. Omit if the integrator clears cookies elsewhere.
    */
   clearCookies?: (() => void) | undefined;
-  /** Read per event so an `ads` change restricts data use without recreating the destination. */
-  getDecision: () => ConsentDecision;
   /**
    * Whether delivering under Limited Data Use substitutes for an `ads` grant right now — wire
    * it to the resolved mode being `"opt-out"`. Read per event. Omit to withhold the
@@ -71,7 +69,7 @@ export interface MetaDestinationOptions {
 
 /**
  * Reference ad destination: maps each event to Meta's shape and applies Limited Data Use
- * from the live `ads` decision (spec-destinations §5), then hands it to an injected
+ * from the consent the event was admitted under, then hands it to an injected
  * transport. Consent-restriction mapping only — the Pixel/CAPI transport and credentials
  * are the integrator's to supply. `consentRequirement` stays `"required"`: an ad sink is
  * never exempt.
@@ -92,13 +90,13 @@ export function createMetaDestination(options: MetaDestinationOptions): Destinat
       stopped = true;
       options.clearCookies?.();
     },
-    async send(event) {
+    async send(event, consent) {
       if (stopped) {
         return;
       }
 
       await options.transport({
-        dataProcessingOptions: toMetaDataProcessingOptions(options.getDecision()),
+        dataProcessingOptions: toMetaDataProcessingOptions(resolveAdDecision(consent)),
         name: event.name,
         properties: flattenEventProps(event.properties),
       });

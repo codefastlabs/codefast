@@ -390,4 +390,20 @@ describe("createClientTracker", () => {
       tracker.track("button_clicked", { id: "cta" });
     }).not.toThrow();
   });
+
+  it("hands each destination the consent its gate admitted the event under", () => {
+    const destination = createRecordingDestination("recorder");
+    const send = vi.spyOn(destination, "send");
+    const gpcTightened: ConsentDecision = { ads: false, analytics: true };
+    const tracker = createClientTracker({
+      anonymousId: () => "anon-1",
+      catalog,
+      destinations: [destination],
+      getConsent: () => gpcTightened,
+    });
+
+    tracker.track("button_clicked", { id: "cta" });
+
+    expect(send).toHaveBeenCalledWith(expect.objectContaining({ name: "button_clicked" }), gpcTightened);
+  });
 });

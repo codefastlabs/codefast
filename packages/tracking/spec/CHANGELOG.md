@@ -17,7 +17,8 @@ Because the extension documents cite fast-moving law and platform contracts, a *
   visitor granted `ads` to. Vectors V1–V4 restated over decisions; new vector V7.
 - **spec-destinations §1, §5 — `isPermittedBy`.** A destination declares the consent it needs (default `analytics`). Ad
   destinations transmit only on an `ads` grant; Limited Data Use substitutes for it only under an opt-out regime, enabled
-  by the integrator, never under opt-in. §4's bootstrap applies the GPC step; V3 extended.
+  by the integrator, never under opt-in. §4's bootstrap applies the GPC step; V3 extended. `send` receives the decision
+  the gate admitted the event under, and LDU derives from it rather than from a second consent read; V6 extended.
 - **spec-server-lane §4** — the runtime composes an effective-consent reader instead of an analytics gate.
 
 ## 1.0.3 — 2026-07-18
